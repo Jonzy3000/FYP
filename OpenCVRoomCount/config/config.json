@@ -1,0 +1,26 @@
+{
+  "contours" : {
+    "min area" : 400
+  },
+  "blob extraction": {
+    "close kernel size": 11,
+    "open kernel size": 3,
+    "threshold value": 244
+  },
+  
+  "count lines" :{
+    "oreientation (horizontal or vertical)" : "horizontal",
+    "start line" : {
+      "percentage of screen" : 30
+    },
+    "end line" : {
+      "percentage of screen" : 60
+    }
+  
+  }, 
+  "people threshold size" : {
+    "max area" : 1000,
+    "max width" : 50,
+    "max height" : 200
+  }
+}
