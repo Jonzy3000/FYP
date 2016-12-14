@@ -5,6 +5,7 @@
 #include "FPSCounter.h"
 #include "stdafx.h"
 #include "ConfigOptions.h"
+#include "CountingLines.h"
 
 class BackgroundSubtractionProcessor {
 public:
@@ -26,6 +27,8 @@ public:
 		auto morphCloseKernel = pConfigOptions->getBlobExtractionConfg()->morphCloseKernelSize;
 		auto thresholdValue = pConfigOptions->getBlobExtractionConfg()->thresholdValue;
 
+		CountingLines countingLines(pConfigOptions->getCountingLinesConfig());
+
 		while (cvWaitKey(10) != 'q') {
 			vc >> frame;
 
@@ -33,8 +36,10 @@ public:
 				break;
 			}
 
-			std::pair<cv::Point, cv::Point> endLine = std::make_pair(cv::Point(0, frame.size().height / 1.3), cv::Point(frame.size().width, frame.size().height / 1.3));
-			std::pair<cv::Point, cv::Point> startLine = std::make_pair(cv::Point(0, frame.size().height / 4.0), cv::Point(frame.size().width, frame.size().height / 4));
+			auto lines = countingLines.getCountingLines(frame.size());
+			auto startLine = lines.first;
+			auto endLine = lines.second;
+			
 			boundingBoxTracker.setCountingLines(startLine, endLine);
 
 			cv::line(frame, startLine.first, startLine.second, cv::Scalar(255, 50, 50));

@@ -19,16 +19,19 @@ public:
 	void setupContourConifg(const JSONLib& json) {
 		auto contoursItr = json.find("contours");
 		if (contoursItr == json.end()) {
+			std::cout << "could not find contours" << std::endl;
 			return;
 		}
 
 		auto contours = *contoursItr;
 		if (!contours.is_object()) {
+			std::cout << "contours is not an object" << std::endl;
 			return;
 		}
 
 		auto minAreaItr = contours.find("min area");
 		if (minAreaItr == contours.end()) {
+			std::cout << "could not find min area" << std::endl;
 			return;
 		}
 
@@ -143,7 +146,9 @@ public:
 			return;
 		}
 
+
 		pCountingLinesConfig = std::make_shared<CountingLinesConfig>(orientation, (int) endLinePercentage, (int) startLinePercentage);
+		std::cout << "set up countinglines correctly" << std::endl;
 	}
 
 	void setupPeopleThreshold(const JSONLib& json) {

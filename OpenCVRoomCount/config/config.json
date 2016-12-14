@@ -14,13 +14,17 @@
       "percentage of screen" : 30
     },
     "end line" : {
-      "percentage of screen" : 60
+      "percentage of screen" : 80
     }
   
-  }, 
-  "people threshold size" : {
-    "max area" : 1000,
-    "max width" : 50,
-    "max height" : 200
+  },
+  "people threshold size": {
+    "max area": 1000,
+    "max width": 50,
+    "max height": 200
+  },
+  "http config": {
+    "port": 8080,
+    "ip": "localhost"
   }
 }

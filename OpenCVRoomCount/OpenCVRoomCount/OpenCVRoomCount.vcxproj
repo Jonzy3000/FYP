@@ -163,6 +163,7 @@
     <ClInclude Include="BoundingBoxTracker.h" />
     <ClInclude Include="ConfigOptions.h" />
     <ClInclude Include="ContourFinder.h" />
+    <ClInclude Include="CountingLines.h" />
     <ClInclude Include="CountManager.h" />
     <ClInclude Include="EdgeDetector.h" />
     <ClInclude Include="EdgeFrameDifferentProcessor.h" />
