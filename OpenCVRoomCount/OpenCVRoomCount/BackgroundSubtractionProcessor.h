@@ -7,6 +7,12 @@
 #include "ConfigOptions.h"
 #include "CountingLines.h"
 
+/*
+TODO - refactor boxes into people, in contour finder
+	 - store hull and box in this person object
+	 - take the hull of the frame and create a colour vector on that
+	 - */
+
 class BackgroundSubtractionProcessor {
 public:
 	BackgroundSubtractionProcessor(cv::VideoCapture & vc_, std::shared_ptr<ConfigOptions> pConfigOptions_) : 
@@ -60,7 +66,7 @@ public:
 			contourFinder.drawBoundingRects(boxes, frame);
 			contourFinder.drawContours(frame);
 
-			boundingBoxTracker.trackBoxes(boxes, frameNumber);
+			boundingBoxTracker.trackBoxes(boxes, frameNumber, frame);
 			boundingBoxTracker.drawIDs(frame);
 			boundingBoxTracker.drawText(frame);
 

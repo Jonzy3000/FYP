@@ -69,7 +69,7 @@ public:
 				for (int y = 0; y < frame.rows; y += 5) {
 					for (int x = 0; x < frame.cols; x += 5) {
 						// get the flow from y, x position
-						const cv::Point2f flowatxy = flow.at<cv::Point2f>(y, x);
+						const cv::Point2f flowatxy = flow.at<cv::Point2f>(y, x) * 1000;
 
 						// draw line at flow direction
 						cv::line(frame, cv::Point(x, y), cv::Point(cvRound(x + flowatxy.x), cvRound(y + flowatxy.y)), cv::Scalar(255, 0, 0));

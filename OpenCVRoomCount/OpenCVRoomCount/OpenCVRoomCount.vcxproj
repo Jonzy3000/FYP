@@ -161,6 +161,7 @@
     <ClInclude Include="BlobTracker.h" />
     <ClInclude Include="BoundingBoxRegulator.h" />
     <ClInclude Include="BoundingBoxTracker.h" />
+    <ClInclude Include="BoundingBoxUtils.h" />
     <ClInclude Include="ConfigOptions.h" />
     <ClInclude Include="ContourFinder.h" />
     <ClInclude Include="CountingLines.h" />

@@ -29,6 +29,8 @@ public:
 	std::vector<cv::Rect> getBoundingBoxesOfCountours() {
 		std::vector<cv::Rect> boundingBoxes;
 		for (auto contour : contours) {
+			/*cv::Mat hull;
+			cv::convexHull(contours, hull);*/
 			boundingBoxes.push_back(cv::boundingRect(contour));
 		}
 

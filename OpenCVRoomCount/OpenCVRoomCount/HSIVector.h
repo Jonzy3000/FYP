@@ -1,13 +1,39 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <functional>
 
 class HSIVector {
 public:
-	HSIVector(cv::Mat & boundingBox_) : boundingBox(boundingBox_) {
+	HSIVector(const cv::Mat & boundingBox_) : boundingBox(boundingBox_) {
 		hsiModel = cv::Mat(boundingBox.rows, boundingBox.cols, boundingBox.type());
 		convertToHSIModel();
+		calculateColourVector();
+		/*for (auto colour : hueColourVector) {
+			std::cout << colour << ", " ;
+		}
+
+		std::cout << std::endl;*/
 	}
+
+	const std::vector<int> getHueColourVector() {
+		return hueColourVector;
+	}
+
+	bool equal(HSIVector& other) {
+		return other.getHueColourVector() == this->hueColourVector;
+	}
+
+private:
+	cv::Mat boundingBox;
+	cv::Mat hsiModel;
+	std::vector<int> hueColourVector;
+	std::vector<int> intensityColourVector;
+
+	std::vector<int> hueHistogram;
+	std::vector<int> intensityHistogram;
+
+	const float PI = 3.14159265;
 
 	void convertToHSIModel() {
 		float red, green, blue, hue, saturation, intensity;
@@ -51,13 +77,66 @@ public:
 		}
 	}
 
+	//we find the hue histogram, if most of the saturation is 0, we then find the intensity colour vector
 
+	void calculateColourVector() {
+		caclculateHistogram();
+		intensityColourVector = getTheNLargestNumbersFromVector(3, intensityHistogram);
+		hueColourVector = getTheNLargestNumbersFromVector(3, hueHistogram);
+	}
 
-private:
-	cv::Mat boundingBox;
-	cv::Mat hsiModel;
-	std::vector<float> hueVector;
-	std::vector<float> intensityVector;
+	std::vector<int> getTheNLargestNumbersFromVector(int n, std::vector<int> vec) {
+		std::vector<int> retVal(n), largestNNumbers(n);
+		int smallestNumber = 0;
+		for (auto deg : vec) {
+			if (deg > smallestNumber) {
+				largestNNumbers.at(n - 1) = deg;
+				smallestNumber = deg;
+				std::sort(largestNNumbers.begin(), largestNNumbers.end(), std::greater<int>());
+			}
+		}
 
-	const float PI = 3.14159265;
+		int j = 0;
+		for (auto number : largestNNumbers) {
+			int index = std::find(vec.begin(), vec.end(), number) - vec.begin();
+			retVal[j++] = index;
+		}
+
+		return retVal;
+	}
+
+	void caclculateHistogram() {
+		calculateIntensityHistogram();
+		calculateHueHistogram();
+	}
+
+	void calculateIntensityHistogram() {
+		intensityHistogram = calculateGenericHistogram(16, 256, false);
+	}
+
+	void calculateHueHistogram() {
+		hueHistogram = calculateGenericHistogram(10, 360, true);
+	}
+
+	std::vector<int> calculateGenericHistogram(const int slicingFactor, const int angles, bool bUseHue) {
+		const int slicesOfHistogram = angles / slicingFactor;
+		std::vector<int> hist(slicesOfHistogram, 0);
+
+		for (int i = 0; i < hsiModel.rows; i++) {
+			for (int j = 0; j < hsiModel.cols; j++)   {
+				double hue = hsiModel.at<cv::Vec3b>(i, j)[0];
+				double intensity = hsiModel.at<cv::Vec3b>(i, j)[2];
+
+				double colourValue = bUseHue ? hue : intensity;
+				colourValue /= slicingFactor;
+				colourValue = ceil(colourValue);
+
+				if (colourValue < slicesOfHistogram) {
+					hist.at(colourValue)++;
+				}
+			}
+		}
+
+		return hist;
+	}
 };

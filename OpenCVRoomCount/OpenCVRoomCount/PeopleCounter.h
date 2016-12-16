@@ -14,6 +14,7 @@ public:
 		JSONReader jsonReader("../config/config.json");
 		auto config = jsonReader.getConfigOptions();
 		BackgroundSubtractionProcessor op(vc, config);
+		//BackgroundSubtractionProcessor op(vc);
 		op.start();
 	}
 };
