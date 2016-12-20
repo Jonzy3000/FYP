@@ -23,7 +23,7 @@ public:
 			EdgeDetector edge = EdgeDetector(frame);
 			cv::Mat edgeFrame = edge.getEdgeFrame();
 			ForegroundEstimation foregroundEstiamtion = ForegroundEstimation();
-			int frameNumber = vc.get(CV_CAP_PROP_POS_FRAMES);
+			int frameNumber = (int) vc.get(CV_CAP_PROP_POS_FRAMES);
 			edgeForeground = foregroundEstiamtion.getForeground(edgeFrame, frameNumber);
 
 			pMOG2->apply(edgeForeground, edgeFrameMOG2);

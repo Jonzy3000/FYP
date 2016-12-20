@@ -97,7 +97,7 @@ private:
 					trackedBox.second.direction = DIRECTION::NONE;
 				}
 				else if (!isThereAValidColourVector(trackedBox.second)) {
-
+					//For now will leave colour vectors - but this is where we should create them.
 				}
 
 				break;

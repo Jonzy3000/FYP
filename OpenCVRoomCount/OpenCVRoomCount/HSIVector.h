@@ -33,7 +33,7 @@ private:
 	std::vector<int> hueHistogram;
 	std::vector<int> intensityHistogram;
 
-	const float PI = 3.14159265;
+	const float PI = 3.14159265f;
 
 	void convertToHSIModel() {
 		float red, green, blue, hue, saturation, intensity;
@@ -46,8 +46,7 @@ private:
 				red = rgb[2];
 
 				intensity = (blue + green + red) / 3;
-				int minValue = 0;
-				minValue = std::min(red, std::min(blue, green));
+				auto minValue = std::min(red, std::min(blue, green));
 
 				saturation = 1 - 3 * (minValue / (red + green + blue));
 
@@ -59,20 +58,20 @@ private:
 				}
 
 				if (saturation != 0) {
-					hue = 0.5 * ((red - green) + (red - blue)) / sqrt(((red - green) * (red - green)) + (red - blue) * (green - blue));
+					hue = 0.5f * ((red - green) + (red - blue)) / sqrt(((red - green) * (red - green)) + (red - blue) * (green - blue));
 					hue = acos(hue);
 
 					if (blue <= green) {
 						hue = hue;
 					}
 					else {
-						hue = ((360 * PI) / 180.0) - hue;
+						hue = ((360 * PI) / 180.0f) - hue;
 					}
 				}
 
-				hsiModel.at<cv::Vec3b>(i, j)[0] = (hue * 180) / PI;
-				hsiModel.at<cv::Vec3b>(i, j)[1] = saturation * 100;
-				hsiModel.at<cv::Vec3b>(i, j)[2] = intensity;
+				hsiModel.at<cv::Vec3f>(i, j)[0] = (hue * 180) / PI;
+				hsiModel.at<cv::Vec3f>(i, j)[1] = saturation * 100.0f;
+				hsiModel.at<cv::Vec3f>(i, j)[2] = intensity;
 			}
 		}
 	}
@@ -124,15 +123,15 @@ private:
 
 		for (int i = 0; i < hsiModel.rows; i++) {
 			for (int j = 0; j < hsiModel.cols; j++)   {
-				double hue = hsiModel.at<cv::Vec3b>(i, j)[0];
-				double intensity = hsiModel.at<cv::Vec3b>(i, j)[2];
+				auto hue = hsiModel.at<cv::Vec3f>(i, j)[0];
+				auto intensity = hsiModel.at<cv::Vec3f>(i, j)[2];
 
-				double colourValue = bUseHue ? hue : intensity;
+				auto colourValue = bUseHue ? hue : intensity;
 				colourValue /= slicingFactor;
 				colourValue = ceil(colourValue);
 
 				if (colourValue < slicesOfHistogram) {
-					hist.at(colourValue)++;
+					hist.at(int(colourValue))++;
 				}
 			}
 		}

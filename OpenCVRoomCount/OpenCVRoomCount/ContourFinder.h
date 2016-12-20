@@ -42,7 +42,7 @@ public:
 
 		std::vector<std::vector<cv::Point> > convexHulls(contours.size());
 
-		for (int i = 0; i < contours.size(); i++) {
+		for (size_t i = 0; i < contours.size(); i++) {
 			auto contour = cv::Mat(contours[i]);
 			cv::convexHull(contour, convexHulls[i]);
 		}
@@ -60,13 +60,13 @@ public:
 	void drawContours(cv::Mat & frame) {
 		cv::RNG rng(12345);
 		cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		for (int i = 0; i < contours.size(); i++) {
+		for (size_t i = 0; i < contours.size(); i++) {
 			cv::drawContours(frame, contours, i, color);
 		}
 	}
 
 	void drawConvexHulls(cv::Mat & frame, std::vector<std::vector<cv::Point> > convexHulls) {
-		for (int i = 0; i < contours.size(); i++) {
+		for (size_t i = 0; i < contours.size(); i++) {
 			if (i >= convexHulls.size()) {
 				break;
 			}

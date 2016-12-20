@@ -51,16 +51,16 @@ private:
 	}
 
 	void setupHorizontalLines(int frameHeight, int frameWidth, int startLinePercent, int endLinePercent) {
-		double startLineHeight = frameHeight * ((double)startLinePercent / 100.0f);
-		double endLineHeight = frameHeight * ((double)endLinePercent / 100.0f);
+		int startLineHeight = frameHeight * startLinePercent / 100;
+		int endLineHeight = frameHeight * endLinePercent / 100;
 
 		startLine = std::make_pair(cv::Point(0, startLineHeight), cv::Point(frameWidth, startLineHeight));
 		endLine = std::make_pair(cv::Point(0, endLineHeight), cv::Point(frameWidth, endLineHeight));
 	}
 
 	void setupVerticalLines(int frameHeight, int frameWidth, int startLinePercent, int endLinePercent) {
-		double startLineWidth = frameWidth * ((double)startLinePercent / 100.0f);
-		double endLineWidth = frameWidth *  ((double)endLinePercent / 100.0f);
+		int startLineWidth = frameWidth * startLinePercent / 100;
+		int endLineWidth = frameWidth *  endLinePercent / 100;
 
 		startLine = std::make_pair(cv::Point(startLineWidth, 0), cv::Point(startLineWidth, frameHeight));
 		endLine = std::make_pair(cv::Point(endLineWidth, 0), cv::Point(endLineWidth, frameHeight));

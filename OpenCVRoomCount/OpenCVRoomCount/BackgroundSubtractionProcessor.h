@@ -48,10 +48,10 @@ public:
 			
 			boundingBoxTracker.setCountingLines(startLine, endLine);
 
-			cv::line(frame, startLine.first, startLine.second, cv::Scalar(35, 255, 35), 1.8);
-			cv::line(frame, endLine.first, endLine.second, cv::Scalar(35, 255, 35), 1.8);
+			cv::line(frame, startLine.first, startLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+			cv::line(frame, endLine.first, endLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
 
-			int frameNumber = vc.get(CV_CAP_PROP_POS_FRAMES);
+			int frameNumber = int(vc.get(CV_CAP_PROP_POS_FRAMES));
 
 			pMOG2->apply(frame, frameMOG2);
 			cv::Mat thresh, morphOpen, morphClose;
