@@ -29,12 +29,25 @@ public:
 	std::vector<cv::Rect> getBoundingBoxesOfCountours() {
 		std::vector<cv::Rect> boundingBoxes;
 		for (auto contour : contours) {
-			/*cv::Mat hull;
-			cv::convexHull(contours, hull);*/
 			boundingBoxes.push_back(cv::boundingRect(contour));
 		}
 
 		return boundingBoxes;
+	}
+
+	std::vector<std::vector<cv::Point> > getConvexHulls() {
+		if (contours.size() == 0) {
+			throw std::exception("No contours found, try calling findContours");
+		}
+
+		std::vector<std::vector<cv::Point> > convexHulls(contours.size());
+
+		for (int i = 0; i < contours.size(); i++) {
+			auto contour = cv::Mat(contours[i]);
+			cv::convexHull(contour, convexHulls[i]);
+		}
+
+		return convexHulls;
 	}
 
 	void drawBoundingRects(std::vector<cv::Rect> boundingBoxes, cv::Mat & frame) {
@@ -49,6 +62,16 @@ public:
 		cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		for (int i = 0; i < contours.size(); i++) {
 			cv::drawContours(frame, contours, i, color);
+		}
+	}
+
+	void drawConvexHulls(cv::Mat & frame, std::vector<std::vector<cv::Point> > convexHulls) {
+		for (int i = 0; i < contours.size(); i++) {
+			if (i >= convexHulls.size()) {
+				break;
+			}
+
+			cv::drawContours(frame, convexHulls, i, cv::Scalar(22, 22, 200));
 		}
 	}
 

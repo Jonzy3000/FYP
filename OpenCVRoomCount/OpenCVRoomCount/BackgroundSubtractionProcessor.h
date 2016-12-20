@@ -35,7 +35,7 @@ public:
 
 		CountingLines countingLines(pConfigOptions->getCountingLinesConfig());
 
-		while (cvWaitKey(10) != 'q') {
+		while (cvWaitKey(18) != 'q') {
 			vc >> frame;
 
 			if (frame.empty()) {
@@ -48,8 +48,8 @@ public:
 			
 			boundingBoxTracker.setCountingLines(startLine, endLine);
 
-			cv::line(frame, startLine.first, startLine.second, cv::Scalar(255, 50, 50));
-			cv::line(frame, endLine.first, endLine.second, cv::Scalar(255, 50, 50));
+			cv::line(frame, startLine.first, startLine.second, cv::Scalar(35, 255, 35), 1.8);
+			cv::line(frame, endLine.first, endLine.second, cv::Scalar(35, 255, 35), 1.8);
 
 			int frameNumber = vc.get(CV_CAP_PROP_POS_FRAMES);
 
@@ -62,13 +62,17 @@ public:
 			ContourFinder contourFinder = ContourFinder(morphClose, minArea);
 			auto contours = contourFinder.findContours();
 			auto boxes = contourFinder.getBoundingBoxesOfCountours();
+			//auto convexHulls = contourFinder.getConvexHulls();
 
-			contourFinder.drawBoundingRects(boxes, frame);
+			//contourFinder.drawBoundingRects(boxes, frame);
 			contourFinder.drawContours(frame);
+			//contourFinder.drawConvexHulls(frame, convexHulls);
 
 			boundingBoxTracker.trackBoxes(boxes, frameNumber, frame);
 			boundingBoxTracker.drawIDs(frame);
 			boundingBoxTracker.drawText(frame);
+
+			cv::rectangle(frame, cv::Rect(250, 285, 50, 50), cv::Scalar(0, 0, 0), 100);
 
 			//cv::dilate(frameMOG2, temp, cv::Mat(), cv::Point(-1, -1), 3);
 			//cv::erode(temp, temp, cv::Mat(), cv::Point(-1, -1), 6);

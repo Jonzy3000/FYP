@@ -15,12 +15,11 @@ public:
 	};
 
 	struct TrackedBox {
-		TrackedBox(cv::Rect & startPoint_, int frameNumber_, DIRECTION direction_, std::shared_ptr<HSIVector> pHSIVector_) :
+		TrackedBox(cv::Rect & startPoint_, int frameNumber_, DIRECTION direction_) :
 			startRect(startPoint_),
 			currentBoundingBox(startPoint_),
 			frameNumber(frameNumber_),
-			direction(direction_),
-			pHSIVector(pHSIVector_)
+			direction(direction_)
 		{
 
 		}
@@ -56,8 +55,10 @@ public:
 	}
 
 	void drawText(cv::Mat& frame) {
-		std::string text = "IN: " + std::to_string(countManger.getCountIn()) + " OUT: " + std::to_string(countManger.getCountOut());
-		cv::putText(frame, text, cv::Point(100, 100), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1, cv::Scalar(25, 25, 255));
+		std::string IN = " IN: " + std::to_string(countManger.getCountOut());
+		std::string OUT = "OUT: " + std::to_string(countManger.getCountIn());
+		cv::putText(frame, IN, cv::Point(frame.cols - 100, 25), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
+		cv::putText(frame, OUT, cv::Point(frame.cols - 100, 55), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 	}
 
 	void drawIDs(cv::Mat& frame) {
@@ -95,6 +96,9 @@ private:
 					updateCounter(trackedBox.second.direction);
 					trackedBox.second.direction = DIRECTION::NONE;
 				}
+				else if (!isThereAValidColourVector(trackedBox.second)) {
+
+				}
 
 				break;
 			}
@@ -103,6 +107,10 @@ private:
 		if (newBox) {
 			addToBoxes(box, frameNumber);
 		}
+	}
+
+	bool isThereAValidColourVector(TrackedBox box) {
+		return box.pHSIVector != nullptr;	
 	}
 
 	bool doColourVecotorsEqual(std::shared_ptr<HSIVector> initial, const cv::Rect box) {
@@ -142,9 +150,7 @@ private:
 			return;
 		}
 
-		auto pHSIVector = std::make_shared<HSIVector>(BoundingBoxUtils::getImageFromBox(frame, box));
-
-		boxes.insert(std::make_pair(idOfBox++, TrackedBox(box, frameNumber, direction, pHSIVector)));
+		boxes.insert(std::make_pair(idOfBox++, TrackedBox(box, frameNumber, direction)));
 	}
 
 	//http://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
