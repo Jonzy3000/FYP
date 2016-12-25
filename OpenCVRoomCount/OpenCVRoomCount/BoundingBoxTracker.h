@@ -5,39 +5,33 @@
 #include "HSIVector.h"
 #include <memory>
 #include "BoundingBoxUtils.h"
+#include "CountingLines.h"
+#include "Direction.h"
+
+typedef CountingLines::TOUCHING_LINE TOUCHING_LINE;
 
 class BoundingBoxTracker {
 public:
-	enum DIRECTION {
-		UP,
-		DOWN,
-		NONE
-	};
-
 	struct TrackedBox {
-		TrackedBox(cv::Rect & startPoint_, int frameNumber_, DIRECTION direction_) :
+		TrackedBox(const cv::Rect & startPoint_, int frameNumber_, TOUCHING_LINE direction_, const std::shared_ptr<HSIVector> pHSIVector_) :
 			startRect(startPoint_),
 			currentBoundingBox(startPoint_),
 			frameNumber(frameNumber_),
-			direction(direction_)
+			direction(direction_),
+			pHSIVector(pHSIVector_)
 		{
 
 		}
 
 		cv::Rect startRect;
-		DIRECTION direction;
+		TOUCHING_LINE direction;
 		cv::Rect currentBoundingBox;
 		int frameNumber;
 		std::shared_ptr<HSIVector> pHSIVector;
 	};
 
-	void updateCounter(DIRECTION direction) {
-		if (direction == DIRECTION::UP) {
-			countManger.incrementCountIn();
-		}
-		else if (direction == DIRECTION::DOWN) {
-			countManger.incrementCountOut();
-		}
+	BoundingBoxTracker() {
+
 	}
 
 	void trackBoxes(std::vector<cv::Rect> baxoesToTrack, int frameNumber, const cv::Mat & frame_) {
@@ -55,8 +49,8 @@ public:
 	}
 
 	void drawText(cv::Mat& frame) {
-		std::string IN = " IN: " + std::to_string(countManger.getCountOut());
-		std::string OUT = "OUT: " + std::to_string(countManger.getCountIn());
+		std::string IN = " IN: " + std::to_string(countManger.getCountIn());
+		std::string OUT = "OUT: " + std::to_string(countManger.getCountOut());
 		cv::putText(frame, IN, cv::Point(frame.cols - 100, 25), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 		cv::putText(frame, OUT, cv::Point(frame.cols - 100, 55), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 	}
@@ -69,16 +63,14 @@ public:
 		}
 	}
 
-	void setCountingLines(std::pair<cv::Point, cv::Point> startLine_, std::pair<cv::Point, cv::Point> endLine_) {
-		startLine = startLine_;
-		endLine = endLine_;
+	void setCountingLines(const CountingLines & countingLines_) {
+		pCountingLines = std::make_shared<CountingLines>(countingLines_);
 	}
 
 private:
 	CountManager countManger = CountManager();
 	std::map<int, TrackedBox> boxes;
-	std::pair<cv::Point, cv::Point> startLine;
-	std::pair<cv::Point, cv::Point> endLine;
+	std::shared_ptr<CountingLines> pCountingLines;
 	int idOfBox = 0;
 	cv::Mat frame;
 
@@ -87,21 +79,20 @@ private:
 
 		for (auto & trackedBox : boxes) {
 			auto currentBox = trackedBox.second.currentBoundingBox;
-			//
-			if (doBoxesOverlap(currentBox, box)) {
-				updateBox(trackedBox.second, box, frameNumber);
-				newBox = false;
 
-				if (hasBoxedPassedLine(trackedBox.second)) {
-					updateCounter(trackedBox.second.direction);
-					trackedBox.second.direction = DIRECTION::NONE;
-				}
-				else if (!isThereAValidColourVector(trackedBox.second)) {
-					//For now will leave colour vectors - but this is where we should create them.
-				}
-
-				break;
+			if (!doBoxesOverlap(currentBox, box)) {
+				continue;
 			}
+
+			updateBox(trackedBox.second, box, frameNumber);
+			newBox = false;
+
+			if (hasBoxedPassedLine(trackedBox.second)) {
+				updateCounter(trackedBox.second.direction);
+				trackedBox.second.direction = TOUCHING_LINE::NONE;
+			}
+
+			break;
 		}
 
 		if (newBox) {
@@ -110,7 +101,7 @@ private:
 	}
 
 	bool isThereAValidColourVector(TrackedBox box) {
-		return box.pHSIVector != nullptr;	
+		return box.pHSIVector != nullptr;
 	}
 
 	bool doColourVecotorsEqual(std::shared_ptr<HSIVector> initial, const cv::Rect box) {
@@ -123,7 +114,7 @@ private:
 	}
 
 	bool hasBoxedPassedLine(TrackedBox & trackedBox) {
-		DIRECTION direction = getDirectionOfBoxBasedOnStartingLine(trackedBox.currentBoundingBox);
+		TOUCHING_LINE direction = whichLineIsBoxTouching(trackedBox.currentBoundingBox);
 
 		if (isBoxAtOppositeLine(direction, trackedBox.direction)) {
 			return true;
@@ -133,41 +124,32 @@ private:
 	}
 
 	void updateBox(TrackedBox & trackedBox, cv::Rect box, int frameNumber) {
-		if (frameNumber == trackedBox.frameNumber) {
-			//mergesplit problem I think, we have two boxes declaring that they're the same box
-			std::cout << "MERGE SPLIT PROBLEM" << std::endl;
-		}
-
 		//trackedBox.pHSIVector = std::make_shared<HSIVector>(BoundingBoxUtils::getImageFromBox(frame, box));
 		trackedBox.currentBoundingBox = box;
 		trackedBox.frameNumber = frameNumber;
 	}
 
 	void addToBoxes(cv::Rect box, int frameNumber) {
-		DIRECTION direction = getDirectionOfBoxBasedOnStartingLine(box);
+		TOUCHING_LINE direction = whichLineIsBoxTouching(box);
 
-		if (direction == DIRECTION::NONE) {
+		if (direction == TOUCHING_LINE::NONE) {
 			return;
 		}
 
-		boxes.insert(std::make_pair(idOfBox++, TrackedBox(box, frameNumber, direction)));
+		auto pHSI = std::make_shared<HSIVector>(BoundingBoxUtils::getImageFromBox(frame, box));
+		boxes.insert(std::make_pair(idOfBox++, TrackedBox(box, frameNumber, direction, pHSI)));
 	}
 
-	//http://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
+	//http://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
 	bool doBoxesOverlap(cv::Rect box1, cv::Rect box2) {
-		return (fabs(box1.x - box2.x) * 2 < box1.width + box2.width &&
-			fabs(box1.y - box2.y) * 2 < box1.height + box2.height);
+		return box1.x < box2.br().x
+			&& box1.br().x > box2.x
+			&& box1.y < box2.br().y
+			&& box1.br().y > box2.y;
 	}
 
-	DIRECTION getDirectionOfBoxBasedOnStartingLine(const cv::Rect & box) {
-		if (box.y < endLine.first.y && box.height + box.y > endLine.first.y) {
-			return DIRECTION::UP;
-		} 
-		if (box.y < startLine.first.y && box.height + box.y > startLine.first.y) {
-			return DIRECTION::DOWN;
-		}
-
-		return DIRECTION::NONE;
+	TOUCHING_LINE whichLineIsBoxTouching(const cv::Rect & box) {
+		return pCountingLines->whichLineIsBoxTouching(box, frame.size(), true);
 	}
 
 	void cleanUpBoxesThatHaveNotBeenUpdatedRecently(int currentFrameNumber) {
@@ -191,7 +173,38 @@ private:
 		}
 	}
 
-	bool isBoxAtOppositeLine(DIRECTION direction, DIRECTION initialDirection) {
-		return direction != DIRECTION::NONE && direction != initialDirection;
+	bool isBoxAtOppositeLine(TOUCHING_LINE direction, TOUCHING_LINE initialDirection) {
+		return direction != TOUCHING_LINE::NONE && direction != initialDirection;
+	}
+
+	void updateCounter(TOUCHING_LINE initialLine) {
+		if (initialLine == TOUCHING_LINE::OUTLINE) {
+			countManger.incrementCountIn();
+		}
+		else if (initialLine == TOUCHING_LINE::INLINE) {
+			countManger.incrementCountOut();
+		}
+	}
+
+	//This should be own class
+	bool isThereAMergeSplitProblem(const cv::Rect & currentBox, const cv::Rect & newBox) {
+		return (fabs(currentBox.area() - newBox.area()) > 50);
+	}
+
+	void processMergeSplitProblem(const cv::Rect & currentBox, const cv::Rect & newBox) {
+		if (currentBox.area() > newBox.area()) {
+			processSplitProblem(currentBox, newBox);
+		}
+		else if (newBox.area() > currentBox.area()) {
+			processMergeProblem(currentBox, newBox);
+		}
+	}
+
+	void processMergeProblem(const cv::Rect & currentBox, const cv::Rect & newBox) {
+
+	}
+
+	void processSplitProblem(const cv::Rect & currentBox, const cv::Rect & newBox) {
+
 	}
 };

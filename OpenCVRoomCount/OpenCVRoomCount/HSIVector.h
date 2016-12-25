@@ -9,18 +9,23 @@ public:
 		hsiModel = cv::Mat(boundingBox.rows, boundingBox.cols, boundingBox.type());
 		convertToHSIModel();
 		calculateColourVector();
-		/*for (auto colour : hueColourVector) {
-			std::cout << colour << ", " ;
-		}
-
-		std::cout << std::endl;*/
 	}
 
 	const std::vector<int> getHueColourVector() {
 		return hueColourVector;
 	}
 
+	void print() {
+		for (auto colour : hueColourVector) {
+			std::cout << colour << ", ";
+		}
+
+		std::cout << std::endl;
+	}
+
 	bool equal(HSIVector& other) {
+		this->print();
+		other.print();
 		return other.getHueColourVector() == this->hueColourVector;
 	}
 
@@ -69,9 +74,9 @@ private:
 					}
 				}
 
-				hsiModel.at<cv::Vec3f>(i, j)[0] = (hue * 180) / PI;
-				hsiModel.at<cv::Vec3f>(i, j)[1] = saturation * 100.0f;
-				hsiModel.at<cv::Vec3f>(i, j)[2] = intensity;
+				hsiModel.at<cv::Vec3b>(i, j)[0] = (hue * 180) / PI;
+				hsiModel.at<cv::Vec3b>(i, j)[1] = saturation * 100.0f;
+				hsiModel.at<cv::Vec3b>(i, j)[2] = intensity;
 			}
 		}
 	}
@@ -122,9 +127,9 @@ private:
 		std::vector<int> hist(slicesOfHistogram, 0);
 
 		for (int i = 0; i < hsiModel.rows; i++) {
-			for (int j = 0; j < hsiModel.cols; j++)   {
-				auto hue = hsiModel.at<cv::Vec3f>(i, j)[0];
-				auto intensity = hsiModel.at<cv::Vec3f>(i, j)[2];
+			for (int j = 0; j < hsiModel.cols; j++) {
+				auto hue = hsiModel.at<cv::Vec3b>(i, j)[0];
+				auto intensity = hsiModel.at<cv::Vec3b>(i, j)[2];
 
 				auto colourValue = bUseHue ? hue : intensity;
 				colourValue /= slicingFactor;

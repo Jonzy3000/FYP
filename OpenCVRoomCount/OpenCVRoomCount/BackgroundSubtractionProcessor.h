@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "ConfigOptions.h"
 #include "CountingLines.h"
+#include "BoundingBoxRegulator.h"
 
 /*
 TODO - refactor boxes into people, in contour finder
@@ -33,9 +34,11 @@ public:
 		auto morphCloseKernel = pConfigOptions->getBlobExtractionConfg()->morphCloseKernelSize;
 		auto thresholdValue = pConfigOptions->getBlobExtractionConfg()->thresholdValue;
 
+		BoundingBoxRegulator boundBoxRegulator(pConfigOptions->getPeopleThresholdSize().get());
+
 		CountingLines countingLines(pConfigOptions->getCountingLinesConfig());
 
-		while (cvWaitKey(18) != 'q') {
+		while (cvWaitKey(45) != 'q') {
 			vc >> frame;
 
 			if (frame.empty()) {
@@ -43,13 +46,10 @@ public:
 			}
 
 			auto lines = countingLines.getCountingLines(frame.size());
-			auto startLine = lines.first;
-			auto endLine = lines.second;
+			auto inLine = lines.first;
+			auto outLine = lines.second;
 			
-			boundingBoxTracker.setCountingLines(startLine, endLine);
-
-			cv::line(frame, startLine.first, startLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
-			cv::line(frame, endLine.first, endLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+			boundingBoxTracker.setCountingLines(countingLines);
 
 			int frameNumber = int(vc.get(CV_CAP_PROP_POS_FRAMES));
 
@@ -62,17 +62,19 @@ public:
 			ContourFinder contourFinder = ContourFinder(morphClose, minArea);
 			auto contours = contourFinder.findContours();
 			auto boxes = contourFinder.getBoundingBoxesOfCountours();
-			//auto convexHulls = contourFinder.getConvexHulls();
+			auto convexHulls = contourFinder.getConvexHulls();
+			
+			auto regulatedBoxes = boundBoxRegulator.regulateBoxes(boxes, convexHulls);
 
-			//contourFinder.drawBoundingRects(boxes, frame);
+			contourFinder.drawBoundingRects(regulatedBoxes, frame);
 			contourFinder.drawContours(frame);
-			//contourFinder.drawConvexHulls(frame, convexHulls);
+			contourFinder.drawConvexHulls(frame, convexHulls);
 
-			boundingBoxTracker.trackBoxes(boxes, frameNumber, frame);
+			boundingBoxTracker.trackBoxes(regulatedBoxes, frameNumber, frame);
 			boundingBoxTracker.drawIDs(frame);
 			boundingBoxTracker.drawText(frame);
 
-			cv::rectangle(frame, cv::Rect(250, 285, 50, 50), cv::Scalar(0, 0, 0), 100);
+			//cv::rectangle(frame, cv::Rect(250, 285, 50, 50), cv::Scalar(0, 0, 0), 100);
 
 			//cv::dilate(frameMOG2, temp, cv::Mat(), cv::Point(-1, -1), 3);
 			//cv::erode(temp, temp, cv::Mat(), cv::Point(-1, -1), 6);
@@ -80,6 +82,12 @@ public:
 			//ContourFinder contourFinder = ContourFinder(temp, 0);
 			//contourFinder.findContours();
 			//contourFinder.drawContours(temp);
+
+			cv::line(frame, inLine.first, inLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+			cv::putText(frame, "In Line", inLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
+
+			cv::line(frame, outLine.first, outLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+			cv::putText(frame, "Out Line", outLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 
 			cv::putText(frame, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
 

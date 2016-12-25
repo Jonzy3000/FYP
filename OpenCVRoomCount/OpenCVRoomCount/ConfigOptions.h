@@ -106,48 +106,51 @@ public:
 			return;
 		}
 
-		auto startLineItr = countLines.find("start line");
-		if (startLineItr == countLines.end()) {
+		//split up
+		auto inLineItr = countLines.find("in line");
+		if (inLineItr == countLines.end()) {
+			std::cout << "Cannot find 'in line'" << std::endl;
 			return;
 		}
 
-		auto startLine = *startLineItr;
-		if (!startLine.is_object()) {
+		auto inLine = *inLineItr;
+		if (!inLine.is_object()) {
 			return;
 		}
 
-		auto startLinePercentageItr = startLine.find("percentage of screen");
-		if (startLinePercentageItr == startLine.end()) {
+		auto inLinePercentageItr = inLine.find("percentage of screen");
+		if (inLinePercentageItr == inLine.end()) {
 			return;
 		}
 
-		auto startLinePercentage = *startLinePercentageItr;
-		if (!startLinePercentage.is_number_integer()) {
+		auto inLinePercentage = *inLinePercentageItr;
+		if (!inLinePercentage.is_number_integer()) {
 			return;
 		}
 
-		auto endLineItr = countLines.find("end line");
-		if (endLineItr == countLines.end()) {
+		auto outLineItr = countLines.find("out line");
+		if (outLineItr == countLines.end()) {
+			std::cout << "Cannot find 'out line'" << std::endl;
 			return;
 		}
 
-		auto endLine = *endLineItr;
-		if (!endLine.is_object()) {
+		auto outLine = *outLineItr;
+		if (!outLine.is_object()) {
 			return;
 		}
 
-		auto endLinePercentageItr = endLine.find("percentage of screen");
-		if (endLinePercentageItr == endLine.end()) {
+		auto outLinePercentageItr = outLine.find("percentage of screen");
+		if (outLinePercentageItr == outLine.end()) {
 			return;
 		}
 
-		auto endLinePercentage = *endLinePercentageItr;
-		if (!endLinePercentage.is_number_integer()) {
+		auto outLinePercentage = *outLinePercentageItr;
+		if (!outLinePercentage.is_number_integer()) {
 			return;
 		}
 
 
-		pCountingLinesConfig = std::make_shared<CountingLinesConfig>(orientation, (int) endLinePercentage, (int) startLinePercentage);
+		pCountingLinesConfig = std::make_shared<CountingLinesConfig>(orientation, (int) outLinePercentage, (int) inLinePercentage);
 		std::cout << "set up countinglines correctly" << std::endl;
 	}
 
@@ -227,9 +230,9 @@ public:
 			VERTICAL
 		};
 
-		CountingLinesConfig(std::string strOrientation, int endLinePercentageOfScreen_, int startLinePerencateOfScreen_) :
-			endLinePercentageOfScreen(endLinePercentageOfScreen_),
-			startLinePerencateOfScreen(startLinePerencateOfScreen_)
+		CountingLinesConfig(std::string strOrientation, int outLinePercentageOfScreen_, int inLinePerencateOfScreen_) :
+			outLinePercentageOfScreen(outLinePercentageOfScreen_),
+			inLinePerencateOfScreen(inLinePerencateOfScreen_)
 		{
 			if (strOrientation == "horizontal") {
 				orientation = ORIENTATION::HORIZONTAL;
@@ -239,19 +242,19 @@ public:
 			}
 		}
 
-		//CountingLinesConfig(line startLine_, line endLine_) :
-		//	startLine(startLine_),
-		//	endLine(endLine_)
+		//CountingLinesConfig(line inLine_, line outLine_) :
+		//	inLine(inLine_),
+		//	outLine(outLine_)
 		//{
 
 		//}
 
-		ORIENTATION orientation;
-		const int endLinePercentageOfScreen;
-		const int startLinePerencateOfScreen;
+		ORIENTATION orientation = ORIENTATION::VERTICAL;
+		const int outLinePercentageOfScreen = 33;
+		const int inLinePerencateOfScreen = 66;
 
-		//const line endLine;
-		//const line startLine;
+		//const line outLine;
+		//const line inLine;
 	};
 
 	struct PeopleThresholdSize {

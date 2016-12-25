@@ -168,6 +168,7 @@
     <ClInclude Include="ContourFinder.h" />
     <ClInclude Include="CountingLines.h" />
     <ClInclude Include="CountManager.h" />
+    <ClInclude Include="Direction.h" />
     <ClInclude Include="EdgeDetector.h" />
     <ClInclude Include="EdgeFrameDifferentProcessor.h" />
     <ClInclude Include="ForegroundEstimation.h" />

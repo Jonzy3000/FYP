@@ -9,9 +9,9 @@ fabs(y - box.y) * 2 < width + box.width;
 }*/
 class ContourFinder {
 public:
-	ContourFinder(cv::Mat source, int minSize) : 
-		source(source), 
-		minSize(minSize) 
+	ContourFinder(cv::Mat source, int minSize) :
+		source(source),
+		minSize(minSize)
 	{
 
 	}
@@ -19,7 +19,7 @@ public:
 	std::vector<std::vector<cv::Point>> findContours() {
 		std::vector<cv::Vec4i> hierarchy;
 
-		cv::findContours(source, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+		cv::findContours(source, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 		removeCountoursThatAreTooSmall();
 
@@ -37,7 +37,7 @@ public:
 
 	std::vector<std::vector<cv::Point> > getConvexHulls() {
 		if (contours.size() == 0) {
-			throw std::exception("No contours found, try calling findContours");
+			return std::vector<std::vector<cv::Point> >();
 		}
 
 		std::vector<std::vector<cv::Point> > convexHulls(contours.size());
@@ -53,8 +53,14 @@ public:
 	void drawBoundingRects(std::vector<cv::Rect> boundingBoxes, cv::Mat & frame) {
 		cv::Scalar colour = cv::Scalar(10, 255, 10);
 		for (auto box : boundingBoxes) {
+			drawBoxDetails(frame, box, colour);
 			cv::rectangle(frame, box, colour);
 		}
+	}
+
+	void drawBoxDetails(cv::Mat & frame, const cv::Rect & boundingBoxes, const cv::Scalar colour) {
+		std::string text = "Width " + std::to_string(boundingBoxes.width) + ", height " + std::to_string(boundingBoxes.height);
+		cv::putText(frame, text, cv::Point(boundingBoxes.br().x, boundingBoxes.br().y), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1, colour);
 	}
 
 	void drawContours(cv::Mat & frame) {

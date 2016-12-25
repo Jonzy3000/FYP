@@ -3,25 +3,25 @@
     "min area" : 400
   },
   "blob extraction": {
-    "close kernel size": 11,
+    "close kernel size": 7,
     "open kernel size": 3,
-    "threshold value": 244
+    "threshold value": 240
   },
   
   "count lines" :{
     "oreientation (horizontal or vertical)" : "horizontal",
-    "start line" : {
-      "percentage of screen" : 30
+    "in line" : {
+      "percentage of screen" : 70
     },
-    "end line" : {
-      "percentage of screen" : 80
+   "out line" : {
+      "percentage of screen" : 45
     }
   
   },
   "people threshold size": {
-    "max area": 1000,
-    "max width": 50,
-    "max height": 200
+    "max area": 20000,
+    "max width": 125,
+    "max height": 175
   },
   "http config": {
     "port": 8080,
