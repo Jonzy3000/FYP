@@ -40,7 +40,7 @@ private:
 	int maxWidth;
 	int maxHeight;
 
-	//could pass down convex hull to and split the hulls in half, then redraw the boundingbox based on hull
+	//smaller functions
 	std::vector<cv::Rect> regulateBox(const cv::Rect &boxToRegulate, const std::vector<cv::Point>& convexHull) {
 		std::vector<cv::Rect> updatedBoxes;
 		if (boxToRegulate.width > maxWidth) {
@@ -49,7 +49,8 @@ private:
 			int xOfBox = boxToRegulate.x;
 
 			for (int i = 0; i < splitIntoNParts; i++) {
-				cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidth - 10, boxToRegulate.height);
+				int newWidthOfBox = i + 1 == splitIntoNParts ? newWidth : newWidth - 10;
+				cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidthOfBox, boxToRegulate.height);
 				xOfBox += newWidth;
 				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, true));
 			}
@@ -61,7 +62,8 @@ private:
 			int yOfBox = boxToRegulate.y;
 
 			for (int i = 0; i < splitIntoNParts; i++) {
-				cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeight - 10);
+				int newHeightOfBox = i + 1 == splitIntoNParts ? newHeight : newHeight - 10;
+				cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeightOfBox);
 				yOfBox += newHeight;
 				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, false));
 			}
@@ -73,7 +75,7 @@ private:
 		return updatedBoxes;
 	}
 
-	//TO DO tidy this function up into two functions xaxis and yaxis
+	//smaller functions
 	cv::Rect getSmallesBoxFromHull(const cv::Rect& reducedBox, const std::vector<cv::Point>& convexHull, bool splitOnXAxis) {
 		int x = splitOnXAxis ? reducedBox.x : -1;
 		int brX = splitOnXAxis  ? reducedBox.br().x : -1;
