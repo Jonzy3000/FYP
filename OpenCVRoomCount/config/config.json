@@ -20,7 +20,7 @@
   },
   "people threshold size": {
     "max area": 20000,
-    "max width": 125,
+    "max width": 110,
     "max height": 175
   },
   "http config": {

@@ -92,7 +92,7 @@ private:
 		if (box.x < outLine.first.x && box.width + box.x > outLine.first.x) {
 			return TOUCHING_LINE::OUTLINE;
 		}
-		if (box.x < inLine.first.x && box.width + box.x> inLine.first.x) {
+		if (box.x < inLine.first.x && box.width + box.x > inLine.first.x) {
 			return TOUCHING_LINE::INLINE;
 		}
 

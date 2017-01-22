@@ -49,7 +49,7 @@ private:
 			int xOfBox = boxToRegulate.x;
 
 			for (int i = 0; i < splitIntoNParts; i++) {
-				cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidth, boxToRegulate.height);
+				cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidth - 10, boxToRegulate.height);
 				xOfBox += newWidth;
 				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, true));
 			}
@@ -61,7 +61,7 @@ private:
 			int yOfBox = boxToRegulate.y;
 
 			for (int i = 0; i < splitIntoNParts; i++) {
-				cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeight);
+				cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeight - 10);
 				yOfBox += newHeight;
 				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, false));
 			}
