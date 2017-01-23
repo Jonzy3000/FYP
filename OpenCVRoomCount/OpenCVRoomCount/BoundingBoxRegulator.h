@@ -39,37 +39,57 @@ private:
 	int maxArea;
 	int maxWidth;
 	int maxHeight;
+	cv::Rect boxToRegulate;
+	std::vector<cv::Point> convexHull;
+	const int PIXEL_GAP = 5;
 
 	//smaller functions
-	std::vector<cv::Rect> regulateBox(const cv::Rect &boxToRegulate, const std::vector<cv::Point>& convexHull) {
+	std::vector<cv::Rect> regulateBox(const cv::Rect & boxToRegulate_, const std::vector<cv::Point>& convexHull_) {
+		convexHull = convexHull_;
+		boxToRegulate = boxToRegulate_;
+
 		std::vector<cv::Rect> updatedBoxes;
 		if (boxToRegulate.width > maxWidth) {
-			int splitIntoNParts = int(ceil(boxToRegulate.width / (double)maxWidth));
-			int newWidth = boxToRegulate.width / splitIntoNParts;
-			int xOfBox = boxToRegulate.x;
-
-			for (int i = 0; i < splitIntoNParts; i++) {
-				int newWidthOfBox = i + 1 == splitIntoNParts ? newWidth : newWidth - 10;
-				cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidthOfBox, boxToRegulate.height);
-				xOfBox += newWidth;
-				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, true));
-			}
+			updatedBoxes = regulateWidthOfBox();
 		}
-
 		else if (boxToRegulate.height > maxHeight) {
-			int splitIntoNParts = int(ceil(boxToRegulate.height / (double)maxHeight));
-			int newHeight = boxToRegulate.height / splitIntoNParts;
-			int yOfBox = boxToRegulate.y;
-
-			for (int i = 0; i < splitIntoNParts; i++) {
-				int newHeightOfBox = i + 1 == splitIntoNParts ? newHeight : newHeight - 10;
-				cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeightOfBox);
-				yOfBox += newHeight;
-				updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, false));
-			}
+			auto regulatedHeightBoxes = regulateHeightOfBox();
+			updatedBoxes.insert(updatedBoxes.end(), regulatedHeightBoxes.begin(), regulatedHeightBoxes.end());
 		}
 		else {
 			updatedBoxes.push_back(boxToRegulate);
+		}
+
+		return updatedBoxes;
+	}
+
+	const std::vector<cv::Rect> regulateWidthOfBox() {
+		std::vector<cv::Rect> updatedBoxes;
+		int splitIntoNParts = int(ceil(boxToRegulate.width / (double)maxWidth));
+		int newWidth = boxToRegulate.width / splitIntoNParts;
+		int xOfBox = boxToRegulate.x;
+
+		for (int i = 0; i < splitIntoNParts; i++) {
+			int newWidthOfBox = i + 1 == splitIntoNParts ? newWidth : newWidth - PIXEL_GAP;
+			cv::Rect reducedBox(xOfBox, boxToRegulate.y, newWidthOfBox, boxToRegulate.height);
+			xOfBox += newWidth;
+			updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, true));
+		}
+
+		return updatedBoxes;
+	}
+
+	const std::vector<cv::Rect> regulateHeightOfBox() {
+		std::vector<cv::Rect> updatedBoxes;
+		int splitIntoNParts = int(ceil(boxToRegulate.height / (double)maxHeight));
+		int newHeight = boxToRegulate.height / splitIntoNParts;
+		int yOfBox = boxToRegulate.y;
+
+		for (int i = 0; i < splitIntoNParts; i++) {
+			int newHeightOfBox = i + 1 == splitIntoNParts ? newHeight : newHeight - PIXEL_GAP;
+			cv::Rect reducedBox(boxToRegulate.x, yOfBox, boxToRegulate.width, newHeightOfBox);
+			yOfBox += newHeight;
+			updatedBoxes.push_back(getSmallesBoxFromHull(reducedBox, convexHull, false));
 		}
 
 		return updatedBoxes;
