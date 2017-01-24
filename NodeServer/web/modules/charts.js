@@ -2,9 +2,7 @@
     "use strict"
 
     var chartsCtrl = function ($scope, $state) {
-        console.log("hello");
         $scope.room = $state.params.room;
-        console.log($scope.room);
 
         $scope.back = function () {
             $state.go("rooms");
