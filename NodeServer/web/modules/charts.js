@@ -1,8 +1,12 @@
 (function () {
     "use strict"
 
-    var chartsCtrl = function ($scope) {
+    var chartsCtrl = function ($scope, $state) {
         console.log("hello");
+
+        $scope.back = function () {
+            $state.go("rooms");
+        }
         $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
         $scope.series = ['Series A', 'Series B'];
         $scope.data = [
@@ -35,18 +39,6 @@
 
     angular
         .module("fyp")
-        .config(['$stateProvider', function ($stateProvider) {
-            $stateProvider
-                .state("charts", {
-                    url: "/charts",
-                    views: {
-                        "charts": {
-                            templateUrl: 'modules/charts.html',
-                            controller: 'chartsCtrl'
-                        }
-                    }
-                })
-        }])
         .controller("chartsCtrl", chartsCtrl)
         ;
 })();

@@ -1,0 +1,22 @@
+<button class="btn btn-primary" ng-click="goToRoom()">CLICK ME</button>
+
+<div class="fyp-table">
+    <table st-table="data" class="table table-striped">
+        <thead>
+            <tr>
+                <th st-sort="room" st-skip-natural="true">Room</th>
+                <th st-sort="occupancy" st-skip-natural="true">Occupancy</th>
+                <th st-sort="max_occupancy" st-skip-natural="true">Max Occupancy</th> 
+                <th st-sort="getters.sortByPercentage" st-skip-natural="true">Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data" ng-click="goToRoom()" class="center-row">
+                <td>{{row.room}}</td>
+                <td>{{row.occupancy}}</td>
+                <td>{{row.max_occupancy}}</td>
+                <td>{{getPercentage(row.occupancy, row.max_occupancy)}}%</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

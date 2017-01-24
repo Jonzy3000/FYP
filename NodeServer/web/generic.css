@@ -1,0 +1,26 @@
+.st-sort-ascent:before{
+    content: '\25B2';
+}
+
+.st-sort-descent:before{
+    content: '\25BC';
+}
+
+th{
+    cursor:pointer
+}
+
+.fyp-table{
+     display: table;
+     margin: 0 auto; 
+}
+
+.center-row {
+     text-align: center;
+     vertical-align: middle;
+} 
+
+.table-striped>tbody>tr:hover{
+    cursor: pointer;
+    background-color: #bcc4fd;
+}

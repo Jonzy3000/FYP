@@ -7,13 +7,16 @@
     <script src="./imports/js/Chart.min.js"></script>
     <script src="./imports/js/angular-chart.min.js"></script>
     <script src="./imports/js/ui-bootstrap-tpls-2.4.0.min.js"></script>
+    <script src="imports/js/smart-table.min.js"></script>
 
     <script src="app.js"></script>
     <link rel="stylesheet" href="./imports/css/bootstrap.css">
+    <link rel="stylesheet" href="generic.css">
 </head>
 
 <body ng-app="fyp">
-    <div ui-view="charts" autoscroll></div>
+    <div ui-view="main" autoscroll></div>
+    <script src="modules/roomController.js"></script>
     <script src="modules/charts.js"></script>
 </body>
 

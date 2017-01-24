@@ -1,11 +1,32 @@
 (function () {
     'use strict';
 
-    angular.module('fyp', ['chart.js', 'ui.router', 'ui.bootstrap'])
+    angular.module('fyp', ['chart.js', 'ui.router', 'ui.bootstrap', 'smart-table'])
         .config([
-            '$urlRouterProvider',
-            function ($urlRouterProvider) {
+            '$urlRouterProvider', '$stateProvider',
+            function ($urlRouterProvider, $stateProvider) {
                 // Set Default view
-                $urlRouterProvider.otherwise('/charts');
+                $urlRouterProvider.otherwise('/rooms');
+
+                $stateProvider
+                    .state("rooms", {
+                        url: "/rooms",
+                        views: {
+                            "main": {
+                                templateUrl: "modules/roomController.html",
+                                controller: "roomCtrl"
+                            }
+                        }
+                    })
+
+                    .state("charts", {
+                        url: "/charts",
+                        views: {
+                            "main": {
+                                templateUrl: 'modules/charts.html',
+                                controller: 'chartsCtrl'
+                            }
+                        }
+                    })
             }])
 })();
