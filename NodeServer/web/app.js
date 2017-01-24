@@ -26,6 +26,9 @@
                                 templateUrl: 'modules/charts.html',
                                 controller: 'chartsCtrl'
                             }
+                        },
+                        params: {
+                            room: "default"
                         }
                     })
             }])

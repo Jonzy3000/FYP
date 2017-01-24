@@ -11,8 +11,8 @@
             { "room": "6N 2.1", "occupancy": 98, "max_occupancy": 360 },
         ];
 
-        $scope.goToRoom = function () {
-            $state.go("charts");
+        $scope.goToRoom = function (roomName) {
+            $state.go("charts", { room: roomName });
         }
 
         $scope.getPercentage = function (n1, n2) {

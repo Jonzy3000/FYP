@@ -24,3 +24,7 @@ th{
     cursor: pointer;
     background-color: #bcc4fd;
 }
+
+.hover:hover{
+    cursor:pointer;
+}
