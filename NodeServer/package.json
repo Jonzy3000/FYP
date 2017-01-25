@@ -1,0 +1,11 @@
+{
+  "name": "fyp-server",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "connect": "^3.5.0",
+    "express": "^4.14.0",
+    "mysql": "^2.13.0",
+    "serve-static": "^1.11.2"
+  }
+}
