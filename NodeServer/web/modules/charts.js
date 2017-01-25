@@ -3,6 +3,8 @@
 
     var chartsCtrl = function ($scope, $state) {
         $scope.room = $state.params.room;
+        $scope.data = $state.params.data;
+        console.log($scope.data);
 
         $scope.back = function () {
             $state.go("rooms");
