@@ -66,6 +66,12 @@ function SqlApiQueries() {
 
     this.apiGetRoom = function (req, res) {
         connection.acquire(function (err, con) {
+            if (req.query.name == null) {
+                con.release();
+                res.send();
+                return;
+            }
+
             var roomName = sanitizeRoomName(req.query.name);
             var query = "SELECT * FROM `" + roomName + "`";
             con.query(query, function (err, result) {

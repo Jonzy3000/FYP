@@ -8,6 +8,8 @@ var routes = require('./routes');
 app = express();
 
 //https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4
+// https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+// http://www.yogasaikrishna.com/simple-restful-api-using-nodejs-express-and-mysql/
 var bodyParser = require('body-parser');
 
 // configure app to use bodyParser()

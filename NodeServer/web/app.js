@@ -28,7 +28,8 @@
                             }
                         },
                         params: {
-                            room: "default"
+                            room: "default",
+                            data: []
                         }
                     })
             }])
