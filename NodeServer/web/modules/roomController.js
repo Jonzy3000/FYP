@@ -2,6 +2,16 @@
     "use strict"
 
     var roomCtrl = function ($scope, $state, roomsApi) {
+        var uuid = function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        /*
+        TODO - auto refresh from server, uuid to check for new updates?
+        */
         console.log("hello");
         $scope.data = [
             { "name": "1W 1.1", "occupancy": 10, "maxOccupancy": 15 },
