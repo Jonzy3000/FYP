@@ -4,11 +4,24 @@
     var chartsCtrl = function ($scope, $state) {
         $scope.room = $state.params.room;
         $scope.data = $state.params.data;
+
+        var convertTimeStampsToDate = function () {
+            _.each($scope.data, function (entry) {
+                if (entry.timestamp == null) {
+                    return;
+                }
+
+                entry.date = new Date(entry.timestamp);
+            })
+        }
+
+        convertTimeStampsToDate();
         console.log($scope.data);
 
         $scope.back = function () {
             $state.go("rooms");
         }
+        
         $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
         $scope.series = ['Series A', 'Series B'];
         $scope.data = [

@@ -1,5 +1,6 @@
 {
   "name": "fyp-server",
+  "version": "0.0.1",
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.16.0",
