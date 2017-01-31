@@ -4,6 +4,25 @@
     var chartsCtrl = function ($scope, $state) {
         $scope.room = $state.params.room;
         $scope.data = $state.params.data;
+        $scope.startDateOpened = false;
+        $scope.openStartDate = function () {
+            updateGraphAxis();
+            $scope.startDateOpened = true;
+        }
+        $scope.now = $scope.startDate = new Date();
+
+        $scope.endDateOpened = false;
+        $scope.openEndDate = function () {
+            updateGraphAxis();
+            $scope.endDateOpened = true;
+        }
+
+        $scope.endDate = new Date();
+
+        var updateGraphAxis = function() {
+            //add some clever logic;
+            var diffOfDates = new Date($scope.endDate - $scop.startDate);
+        }
 
         var convertTimeStampsToDate = function () {
             _.each($scope.data, function (entry) {
@@ -21,17 +40,20 @@
         $scope.back = function () {
             $state.go("rooms");
         }
-        
+
+        $scope.yearView = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        $scope.weekView = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        $scope.dayView - ["7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+
+
+
         $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-        $scope.series = ['Series A', 'Series B'];
         $scope.data = [
-            [65, 59, 80, 81, 56, 55, 40],
-            [28, 48, 40, 19, 86, 27, 90]
+            [28, 100, 40, 19, 86, 27, 90]
         ];
         $scope.onClick = function (points, evt) {
             console.log(points, evt);
         };
-        $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
         $scope.options = {
             scales: {
                 yAxes: [
@@ -40,12 +62,6 @@
                         type: 'linear',
                         display: true,
                         position: 'left'
-                    },
-                    {
-                        id: 'y-axis-2',
-                        type: 'linear',
-                        display: true,
-                        position: 'right'
                     }
                 ]
             }

@@ -5,6 +5,35 @@
         </div>
     </div>
 </nav>
-<canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options"
-    chart-dataset-override="datasetOverride" chart-click="onClick">
+
+<div class="center-content">
+    <div class="row">
+        <div class="col-xs-6">
+            Start Date:
+            <div class=" input-group ">
+                <input type="text" class="form-control" maxDate="endDate" uib-datepicker-popup="dd/MM/yyyy" ng-model="startDate" is-open="startDateOpened"
+                    ng-required="true" />
+                <span class="input-group-btn">
+            <button class="btn btn-default" ng-click="openStartDate()">
+                <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            End Date:
+            <div class=" input-group ">
+                <input type="text " class="form-control " uib-datepicker-popup="dd/MM/yyyy" maxDate="now" ng-model="endDate " is-open="endDateOpened
+    " ng-required="true " />
+                <span class="input-group-btn ">
+            <button class="btn btn-default " ng-click="openEndDate() ">
+                <i class="glyphicon glyphicon-calendar "></i>
+            </button>
+        </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<canvas id="line " class="chart chart-line " chart-data="data " chart-labels="labels" chart-click="onClick ">
 </canvas>

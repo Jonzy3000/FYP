@@ -10,7 +10,7 @@ th{
     cursor:pointer
 }
 
-.fyp-table{
+.fyp-table, .center-content{
      display: table;
      margin: 0 auto; 
 }

@@ -9,6 +9,10 @@ function SqlApiQueries() {
         var occupancy = 0;
         getRowOfRoom(roomName, function (result) {
             connection.acquire(function (err, con) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
                 if (!result.length) {
                     var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?)";
                     con.query(query, [roomName, occupancy, maxOccupancy], createRoomCounterTable.bind(null, con, roomName));
@@ -36,6 +40,11 @@ function SqlApiQueries() {
 
         getRowOfRoom(roomName, function (result) {
             connection.acquire(function (err, con) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
                 if (!result) {
                     console.log("CANNOT FIND ROOM " + roomName);
                     return
@@ -56,6 +65,11 @@ function SqlApiQueries() {
     //TODO tidy thesse as only query is different
     this.apiGetAllRooms = function (res) {
         connection.acquire(function (err, con) {
+            if (err) {
+                console.log(err);
+                res.send();
+                return;
+            }
             var query = "SELECT * FROM " + roomsTableName;
             con.query(query, function (err, result) {
                 con.release();
@@ -66,6 +80,11 @@ function SqlApiQueries() {
 
     this.apiGetRoom = function (req, res) {
         connection.acquire(function (err, con) {
+            if (err) {
+                console.log(err);
+                res.send();
+                return;
+            }
             if (req.query.name == null) {
                 con.release();
                 res.send();
@@ -84,6 +103,11 @@ function SqlApiQueries() {
 
     this.apiGetRoomWithinDateRange = function (req, res) {
         connection.acquire(function (err, con) {
+            if (err) {
+                console.log(err);
+                res.send();
+                return;
+            }
             var startDate = jsStringDateToMySQLDate(req.query.startDate);
             var endDate = jsStringDateToMySQLDate(req.query.endDate);
             var query = "SELECT * FROM `" + roomName + "`  WHERE timestamp > ? AND timestamp < ?";
@@ -115,6 +139,11 @@ function SqlApiQueries() {
         room = room.toLowerCase().trim();
         var query = "SELECT ID FROM " + roomsTableName + "WHERE name = " + room;
         connection.acquire(function (err, con) {
+            if (err) {
+                console.log(err);
+                callback();
+
+            }
             con.query(query, function (err, result) {
                 con.release();
                 callback(result);
@@ -126,6 +155,10 @@ function SqlApiQueries() {
         room = room.toLowerCase().trim();
         var query = "SELECT * FROM " + roomsTableName + " WHERE name = ?";
         connection.acquire(function (err, con) {
+            if (err) {
+                console.log(err);
+                callback();
+            }
             con.query(query, [room], function (err, result) {
                 con.release();
                 callback(result);

@@ -27,6 +27,12 @@ var Connection = function () {
     this.createTableIfDoesNotExist = function () {
         var _this = this;
         this.acquire(function (error, connection) {
+            if (error) {
+                console.log("Problem connecting to db");
+                console.log(error);
+                console.log(connection);
+                return;
+            }
             var query = "SELECT 1 FROM " + _this.roomsTableName + " LIMIT 1";
             connection.query(query, function (err) {
                 connection.release();
