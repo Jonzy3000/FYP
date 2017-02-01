@@ -6,22 +6,30 @@
         $scope.data = $state.params.data;
         $scope.startDateOpened = false;
         $scope.openStartDate = function () {
-            updateGraphAxis();
+            updateData();
             $scope.startDateOpened = true;
         }
         $scope.now = $scope.startDate = new Date();
 
-        $scope.endDateOpened = false;
-        $scope.openEndDate = function () {
-            updateGraphAxis();
-            $scope.endDateOpened = true;
-        }
-
-        $scope.endDate = new Date();
-
-        var updateGraphAxis = function() {
+        $scope.updateGraphAxis = function (option) {
+            $scope.graphXAxisConfig = option;
+            console.log($scope.graphXAxisConfig);
+            switch (option) {
+                case "Day":
+                    $scope.labels = $scope.dayView;
+                    break;
+                case "Week":
+                    $scope.labels = $scope.weekView;
+                    break;
+                case "Month":
+                    $scope.labels = $scope.weekView.concat($scope.weekView.concat($scope.weekView.concat($scope.weekView)));
+                    break;
+                case "Year":
+                    $scope.labels = $scope.yearView;
+                    break;
+            }
             //add some clever logic;
-            var diffOfDates = new Date($scope.endDate - $scop.startDate);
+            // var diffOfDates = new Date($scope.endDate - $scop.startDate);
         }
 
         var convertTimeStampsToDate = function () {
@@ -43,8 +51,10 @@
 
         $scope.yearView = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         $scope.weekView = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        $scope.dayView - ["7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+        $scope.dayView = ["7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
+        $scope.graphXAxisOptions = ["Day", "Week", "Month", "Year"];
+        $scope.graphXAxisConfig = $scope.graphXAxisOptions[0];
 
 
         $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
