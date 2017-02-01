@@ -11,6 +11,10 @@
         }
         $scope.now = $scope.startDate = new Date();
 
+        var updateData = function() {
+            
+        }
+
         $scope.updateGraphAxis = function (option) {
             $scope.graphXAxisConfig = option;
             console.log($scope.graphXAxisConfig);
