@@ -45,5 +45,11 @@ module.exports = {
             .get(function (req, res) {
                 apiQueries.apiGetRoomID(req, res);
             });
+
+        router.route(roomsURL + "generateRandomData")
+            .get(function (req, res) {
+                apiQueries.generateRandomData();
+                res.send();
+            })
     }
 }

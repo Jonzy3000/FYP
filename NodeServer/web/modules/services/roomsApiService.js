@@ -20,6 +20,10 @@
         this.getRoomWithDateRange = function (name, startDate, endDate) {
             return $http.get(path + "roomWithinDateRange", { params: { name: name, startDate: startDate, endDate: endDate } }).then(getData);
         }
+
+        this.generateRandomData = function () {
+            return $http.get(path + "generateRandomData");
+        }
     }
 
     angular.module("fyp")

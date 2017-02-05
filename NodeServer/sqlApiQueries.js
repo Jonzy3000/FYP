@@ -24,7 +24,9 @@ function SqlApiQueries() {
             });
         });
 
-        res.send();
+        if (res) {
+            res.send();
+        }
     }
 
     var jsStringDateToMySQLDate = function (date) {
@@ -34,7 +36,8 @@ function SqlApiQueries() {
     this.updateCounter = function (req, res) {
         var roomName = sanitizeRoomName(req.body.name);
         var incrementBy = req.body.incrementBy;
-        var timestamp = jsStringDateToMySQLDate(new Date());
+        var date = req.body.date ? req.body.date : new Date();
+        var timestamp = jsStringDateToMySQLDate(date);
 
         //TODO PARSE TIMESTAMP TO VALID;
 
@@ -59,7 +62,9 @@ function SqlApiQueries() {
             });
         });
 
-        res.send();
+        if (res) {
+            res.send();
+        }
     }
 
     //TODO tidy thesse as only query is different
@@ -170,6 +175,39 @@ function SqlApiQueries() {
         con.release();
         if (err) {
             console.error('error' + err.stack)
+        }
+    }
+
+    var randomDate = function (start, end) {
+        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    }
+
+    var randomSingedNumber = function (between) {
+        return (Math.random() < 0.5 ? -1 : 1) * Math.round(Math.random() * between);
+    }
+
+    this.generateRandomData = function (test, res) {
+        var roomName = "test";
+        var _this = this;
+        var req = {
+            "body": {
+                "maxOccupancy": 160,
+                "name": roomName
+            }
+        }
+
+        _this.newRoom(req);
+        for (var i = 0; i < 10000; i++) {
+            var date = randomDate(new Date("2016"), new Date());
+            var req = {
+                "body": {
+                    "name": roomName,
+                    "date": date,
+                    "incrementBy": randomSingedNumber(10)
+                }
+            }
+
+            _this.updateCounter(req, res);
         }
     }
 }

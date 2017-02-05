@@ -43,6 +43,10 @@
                 return $scope.getPercentage(room.occupancy, room.maxOccupancy);
             }
         }
+
+        $scope.generateRandomData = function () {
+            roomsApi.generateRandomData();
+        }
     }
 
     angular
