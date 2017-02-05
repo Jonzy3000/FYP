@@ -27,11 +27,7 @@
         })
 
         $scope.goToRoom = function (roomName) {
-            roomsApi.getRoom(roomName).then(function (data) {
-                console.log(data);
-                $state.go("charts", { room: roomName, data: data });
-            })
-
+            $state.go("charts", { room: roomName });
         }
 
         $scope.getPercentage = function (n1, n2) {

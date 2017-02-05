@@ -1,13 +1,23 @@
 (function () {
     "use strict"
 
-    var chartsCtrl = function ($scope, $state) {
-        $scope.room = $state.params.room;
-        $scope.data = $state.params.data;
+    var chartsCtrl = function ($scope, $state, roomsApi) {
+        $scope.roomName = $state.params.room;
+        if ($scope.roomName == null || $scope.roomName == 'default') {
+            $scope.roomName = localStorage.getItem("roomName");
+        }
+
+        localStorage.setItem("roomName", $scope.roomName);
+
         $scope.startDateOpened = false;
         $scope.openStartDate = function () {
             $scope.startDateOpened = true;
         }
+        
+        roomsApi.getRoom($scope.roomName).then(function (data) {
+            $scope.data = data;
+            convertTimeStampsToDate();
+        });
 
         //http://www.chartjs.org/docs/#time-scale
 
@@ -117,25 +127,14 @@
             })
         }
 
-        convertTimeStampsToDate();
-        console.log($scope.data);
-
         $scope.back = function () {
             $state.go("rooms");
         }
-
-        // $scope.yearView = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        // $scope.weekView = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        // $scope.dayView = ["7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
         $scope.graphXAxisOptions = ["Day", "Week", "Month", "Year"];
         $scope.graphXAxisConfig = $scope.graphXAxisOptions[0];
 
         dateThreshold = addDays($scope.startDate, 1);
-
-        // $scope.datasetOverride = [{
-        //     pointRadius: 2
-        // }]
         $scope.options = {
             scales: {
                 yAxes: [
