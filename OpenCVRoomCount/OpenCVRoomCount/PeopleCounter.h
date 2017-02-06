@@ -6,6 +6,7 @@
 #include "OpticalFlowProcessor.h"
 #include "BackgroundSubtractionProcessor.h"
 #include "JSONReader.h"
+#include "HttpPostRequests.h"
 class PeopleCounter
 {
 public:
@@ -14,6 +15,9 @@ public:
 		JSONReader jsonReader("../config/config.json");
 		auto config = jsonReader.getConfigOptions();
 		BackgroundSubtractionProcessor op(vc, config);
+
+		HttpPostRequests http = HttpPostRequests();
+		http.newRoom("test123", 150);
 		//BackgroundSubtractionProcessor op(vc);
 		op.start();
 	}
