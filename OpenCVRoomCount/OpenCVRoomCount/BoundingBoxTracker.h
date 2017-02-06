@@ -80,7 +80,7 @@ private:
 		for (auto & trackedBox : boxes) {
 			auto currentBox = trackedBox.second.currentBoundingBox;
 
-			if (!doBoxesOverlap(currentBox, box)) {
+			if (!isSameTrackedBox(currentBox, box)) {
 				continue;
 			}
 
@@ -140,12 +140,21 @@ private:
 		boxes.insert(std::make_pair(idOfBox++, TrackedBox(box, frameNumber, direction, pHSI)));
 	}
 
+	bool centersWithinAcceptableDistances(const cv::Rect& box1, const cv::Rect& box2) {
+		return BoundingBoxUtils::getDistanceOfCentersBoxes(box1, box2) < 16;
+	}
+
 	//http://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-	bool doBoxesOverlap(cv::Rect box1, cv::Rect box2) {
+	bool doBoxesOverlap(const cv::Rect& box1, const cv::Rect& box2) {
 		return box1.x < box2.br().x
 			&& box1.br().x > box2.x
 			&& box1.y < box2.br().y
 			&& box1.br().y > box2.y;
+	}
+
+
+	bool isSameTrackedBox(const cv::Rect& box1, const cv::Rect& box2) {
+		return doBoxesOverlap(box1, box2) && centersWithinAcceptableDistances(box1, box2);
 	}
 
 	TOUCHING_LINE whichLineIsBoxTouching(const cv::Rect & box) {
