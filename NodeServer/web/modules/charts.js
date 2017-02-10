@@ -3,6 +3,8 @@
 
     var chartsCtrl = function ($scope, $state, roomsApi) {
         $scope.roomName = $state.params.room;
+        var maxOccupancy = $state.params.maxOccupancy;
+        console.log(maxOccupancy);
         if ($scope.roomName == null || $scope.roomName == 'default') {
             $scope.roomName = localStorage.getItem("roomName");
         }
@@ -13,7 +15,7 @@
         $scope.openStartDate = function () {
             $scope.startDateOpened = true;
         }
-        
+
         roomsApi.getRoom($scope.roomName).then(function (data) {
             $scope.data = data;
             convertTimeStampsToDate();
@@ -25,15 +27,16 @@
         $scope.startDate.setHours(0, 0, 0, 0);
 
         var dateThreshold;
+        var numberOfDataPoints = 50;
 
         var isDateToBeDispalyed = function (dateDiff) {
             return dateDiff > 0 && dateThreshold - $scope.startDate >= dateDiff;
         }
 
         var smoothData = function (rawDisplayedData) {
-            var step = rawDisplayedData.length / 200;
+            var step = rawDisplayedData.length / numberOfDataPoints;
             var smoothedData = [];
-            for (var i = 0; i < rawDisplayedData.length; i += step) {
+            for (var i = 0, length = rawDisplayedData.length; i < length; i += step) {
                 var index = Math.round(i);
 
                 if (index >= rawDisplayedData.length) {
@@ -51,7 +54,7 @@
             $scope.displayedData = [[]];
 
             rawDisplayedData = _.sortBy(rawDisplayedData, 'date');
-            if (rawDisplayedData.length > 200) {
+            if (rawDisplayedData.length > numberOfDataPoints) {
                 rawDisplayedData = smoothData(rawDisplayedData);
             }
 

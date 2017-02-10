@@ -26,8 +26,8 @@
             $scope.data = $scope.data.concat(data);
         })
 
-        $scope.goToRoom = function (roomName) {
-            $state.go("charts", { room: roomName });
+        $scope.goToRoom = function (roomName, maxOccupancy) {
+            $state.go("charts", { room: roomName, maxOccupancy: maxOccupancy });
         }
 
         $scope.getPercentage = function (n1, n2) {

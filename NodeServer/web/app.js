@@ -28,7 +28,7 @@
                             }
                         },
                         params: {
-                            room: "default",
+                            maxOccupancy: 15,
                             data: []
                         }
                     })
