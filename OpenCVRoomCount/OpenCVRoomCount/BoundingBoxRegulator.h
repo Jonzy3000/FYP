@@ -41,7 +41,7 @@ private:
 	int maxHeight;
 	cv::Rect boxToRegulate;
 	std::vector<cv::Point> convexHull;
-	const int PIXEL_GAP = 5;
+	const int PIXEL_GAP = 0;
 
 	//smaller functions
 	std::vector<cv::Rect> regulateBox(const cv::Rect & boxToRegulate_, const std::vector<cv::Point>& convexHull_) {

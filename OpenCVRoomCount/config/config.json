@@ -11,10 +11,10 @@
   "count lines" :{
     "oreientation (horizontal or vertical)" : "horizontal",
     "in line" : {
-      "percentage of screen" : 70
+      "percentage of screen" : 80
     },
    "out line" : {
-      "percentage of screen" : 45
+      "percentage of screen" : 30
     }
   
   },
