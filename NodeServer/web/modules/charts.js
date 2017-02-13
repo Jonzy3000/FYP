@@ -23,7 +23,7 @@
 
         //http://www.chartjs.org/docs/#time-scale
 
-        $scope.now = $scope.startDate = new Date();
+        $scope.startDate = new Date();
         $scope.startDate.setHours(0, 0, 0, 0);
 
         var dateThreshold;

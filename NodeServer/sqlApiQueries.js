@@ -68,7 +68,7 @@ function SqlApiQueries() {
     }
 
     //TODO tidy thesse as only query is different
-    this.apiGetAllRooms = function (res) {
+    this.apiGetAllRooms = function (req, res) {
         connection.acquire(function (err, con) {
             if (err) {
                 console.log(err);
@@ -145,6 +145,7 @@ function SqlApiQueries() {
         var query = "SELECT ID FROM " + roomsTableName + "WHERE name = " + room;
         connection.acquire(function (err, con) {
             if (err) {
+                con.release();
                 console.log(err);
                 callback();
 
@@ -161,6 +162,7 @@ function SqlApiQueries() {
         var query = "SELECT * FROM " + roomsTableName + " WHERE name = ?";
         connection.acquire(function (err, con) {
             if (err) {
+                con.release();
                 console.log(err);
                 callback();
             }

@@ -12,7 +12,6 @@
         /*
         TODO - auto refresh from server, uuid to check for new updates?
         */
-        console.log("hello");
         $scope.data = [
             { "name": "1W 1.1", "occupancy": 10, "maxOccupancy": 15 },
             { "name": "2E 1.1", "occupancy": 22, "maxOccupancy": 30 },
