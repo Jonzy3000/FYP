@@ -50,6 +50,6 @@ module.exports = {
             .get(function (req, res) {
                 apiQueries.generateRandomData();
                 res.send();
-            })
+            });
     }
 }
