@@ -49,6 +49,10 @@
             return smoothedData;
         }
 
+        var getPercentage = function (val) {
+            return Math.round(val / maxOccupancy * 100 * 10) / 10;
+        }
+
         var averageDisplayedData = function (rawDisplayedData) {
             $scope.labels = [];
             $scope.displayedData = [[]];
@@ -60,7 +64,7 @@
 
             for (var i = 0; i < rawDisplayedData.length; i++) {
                 $scope.labels.push(moment(rawDisplayedData[i].date));
-                $scope.displayedData[0].push(rawDisplayedData[i].occupancy);
+                $scope.displayedData[0].push(getPercentage(rawDisplayedData[i].occupancy));
             }
         }
 
@@ -108,7 +112,7 @@
                     dateThreshold = addWeeks($scope.startDate, 1);
                     break;
                 case "Month":
-                    $scope.options.scales.xAxes[0].time.unit = "week";
+                    $scope.options.scales.xAxes[0].time.unit = "day";
                     dateThreshold = addMonths($scope.startDate, 1);
                     break;
                 case "Year":
@@ -139,13 +143,24 @@
 
         dateThreshold = addDays($scope.startDate, 1);
         $scope.options = {
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem) {
+                        return tooltipItem.yLabel + "%";
+                    }
+                }
+            },
             scales: {
                 yAxes: [
                     {
                         id: 'y-axis-1',
                         type: 'linear',
                         display: true,
-                        position: 'left'
+                        position: 'left',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Occupancy (%)'
+                        }
                     }
                 ],
                 xAxes: [{
