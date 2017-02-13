@@ -11,13 +11,13 @@ class PeopleCounter
 {
 public:
 	void start() {
-		cv::VideoCapture vc = cv::VideoCapture("video\\peopleCounter.avi");
+		cv::VideoCapture vc = cv::VideoCapture("..\\video\\People Counting Video Analytics.mp4");
 		JSONReader jsonReader("../config/config.json");
 		auto config = jsonReader.getConfigOptions();
 		BackgroundSubtractionProcessor op(vc, config);
 
-		HttpPostRequests http = HttpPostRequests();
-		http.newRoom("test123", 150);
+		/*HttpPostRequests http = HttpPostRequests();
+		http.newRoom("test123", 150);*/
 		//BackgroundSubtractionProcessor op(vc);
 		op.start();
 	}
