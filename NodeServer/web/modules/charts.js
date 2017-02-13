@@ -27,23 +27,19 @@
         $scope.startDate.setHours(0, 0, 0, 0);
 
         var dateThreshold;
-        var numberOfDataPoints = 50;
+        var numberOfDataPoints = 75;
 
         var isDateToBeDispalyed = function (dateDiff) {
             return dateDiff > 0 && dateThreshold - $scope.startDate >= dateDiff;
         }
 
         var smoothData = function (rawDisplayedData) {
-            var step = rawDisplayedData.length / numberOfDataPoints;
+            var step = Math.round(rawDisplayedData.length / numberOfDataPoints);
             var smoothedData = [];
-            for (var i = 0, length = rawDisplayedData.length; i < length; i += step) {
-                var index = Math.round(i);
-
-                if (index >= rawDisplayedData.length) {
-                    break;
+            for (var i = 0, length = rawDisplayedData.length; i < length; i++) {
+                if (i % step == 0) {
+                    smoothedData.push(rawDisplayedData[i]);
                 }
-
-                smoothedData.push(rawDisplayedData[index]);
             }
 
             return smoothedData;
@@ -165,6 +161,10 @@
                 ],
                 xAxes: [{
                     type: 'time',
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 15
+                    },
                     time: {
                         unit: 'month',
                         displayFormats: {
