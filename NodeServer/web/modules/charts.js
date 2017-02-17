@@ -153,8 +153,15 @@
         $scope.graphXAxisConfig = $scope.graphXAxisOptions[0];
 
         dateThreshold = addDays($scope.startDate, 1);
+
+        $scope.series = [
+            $scope.roomName
+        ];
+
         $scope.options = {
-            // responsive: true,
+            legend: {
+                display: true,
+            },
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem) {
