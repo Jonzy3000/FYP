@@ -1,6 +1,19 @@
 var connection = require('./sqlPoolConnection');
 
 function SqlApiQueries() {
+    var uuid = function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    var updateTransID = function() {
+        transID = uuid;
+    }
+
+    var transID = uuid();
+
     var roomsTableName = connection.roomsTableName;
     this.newRoom = function (req, res) {
         console.log(req.body);
@@ -13,6 +26,9 @@ function SqlApiQueries() {
                     console.log(err);
                     return;
                 }
+
+                updateTransID();
+
                 if (!result.length) {
                     var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?)";
                     con.query(query, [roomName, occupancy, maxOccupancy], createRoomCounterTable.bind(null, con, roomName));
@@ -53,6 +69,7 @@ function SqlApiQueries() {
                     return
                 }
 
+                updateTransID();
                 var occupancy = Number(result[0].occupancy) + Number(incrementBy);
                 var id = result[0].id;
                 var query = "UPDATE " + roomsTableName + " SET occupancy = ? WHERE ID = ? ;"
@@ -75,10 +92,17 @@ function SqlApiQueries() {
                 res.send();
                 return;
             }
+
+            if (req.query.id == transID) {
+                res.send({ id: transID });
+                con.release();
+                return;
+            }
+
             var query = "SELECT * FROM " + roomsTableName;
             con.query(query, function (err, result) {
                 con.release();
-                res.send(result);
+                res.send({ id: transID, result: result });
             })
         })
     }
@@ -96,11 +120,16 @@ function SqlApiQueries() {
                 return;
             }
 
+            if (req.query.id == transID) {
+                res.send({ id: transID });
+                return
+            }
+
             var roomName = sanitizeRoomName(req.query.name);
             var query = "SELECT * FROM `" + roomName + "`";
             con.query(query, function (err, result) {
                 con.release();
-                res.send(result);
+                res.send({ id: transID, result: result });
             })
 
         });
@@ -113,12 +142,21 @@ function SqlApiQueries() {
                 res.send();
                 return;
             }
+
+            if (req.query.id == transID) {
+                res.send({ id: transID });
+                con.release();
+                return;
+            }
+
             var startDate = jsStringDateToMySQLDate(req.query.startDate);
             var endDate = jsStringDateToMySQLDate(req.query.endDate);
+            var roomName = sanitizeRoomName(req.query.name);
+
             var query = "SELECT * FROM `" + roomName + "`  WHERE timestamp > ? AND timestamp < ?";
             con.query(query, [startDate, endDate], function (err, result) {
                 con.release();
-                res.send(result);
+                res.send({ id: transID, result: result });
             })
         })
     }

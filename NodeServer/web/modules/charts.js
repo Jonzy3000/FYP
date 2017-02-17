@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    var chartsCtrl = function ($scope, $state, roomsApi) {
+    var chartsCtrl = function ($scope, $state, roomsApi, $interval) {
         $scope.roomName = $state.params.room;
         var maxOccupancy = $state.params.maxOccupancy;
         console.log(maxOccupancy);
@@ -16,10 +16,23 @@
             $scope.startDateOpened = true;
         }
 
-        roomsApi.getRoom($scope.roomName).then(function (data) {
-            $scope.data = data;
-            convertTimeStampsToDate();
-        });
+
+        var onNewData = function (data) {
+            transID = data.id;
+            if (data.result) {
+                $scope.data = data.result;
+                _.sortBy($scope.data, 'date');
+                convertTimeStampsToDate();
+            }
+        }
+
+        var transID = 0;
+        roomsApi.getRoom($scope.roomName, transID).then(onNewData);
+
+        var interval = $interval(function () {
+            roomsApi.getRoomWithDateRange($scope.roomName, $scope.data[$scope.data.length - 1].date, new Date(), transID)
+                .then(onNewData);
+        }, 5000);
 
         //http://www.chartjs.org/docs/#time-scale
 
@@ -131,6 +144,8 @@
         }
 
         $scope.back = function () {
+            $interval.cancel(interval);
+            interval = undefined;
             $state.go("rooms");
         }
 
@@ -139,6 +154,7 @@
 
         dateThreshold = addDays($scope.startDate, 1);
         $scope.options = {
+            // responsive: true,
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem) {

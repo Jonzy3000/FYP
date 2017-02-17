@@ -1,14 +1,7 @@
 (function () {
     "use strict"
 
-    var roomCtrl = function ($scope, $state, roomsApi) {
-        var uuid = function () {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
-
+    var roomCtrl = function ($scope, $state, roomsApi, $interval) {
         /*
         TODO - auto refresh from server, uuid to check for new updates?
         */
@@ -22,10 +15,12 @@
 
         roomsApi.getAllRooms().then(function (data) {
             console.log(data);
-            $scope.data = $scope.data.concat(data);
+            $scope.data = $scope.data.concat(data.result);
         })
 
         $scope.goToRoom = function (roomName, maxOccupancy) {
+            $interval.cancel(interval);
+            interval = undefined;
             $state.go("charts", { room: roomName, maxOccupancy: maxOccupancy });
         }
 
@@ -42,6 +37,16 @@
         $scope.generateRandomData = function () {
             roomsApi.generateRandomData();
         }
+
+        var transID = 0;
+        var interval = $interval(function () {
+            roomsApi.getAllRooms(transID).then(function (data) {
+                transID = data.id
+                if (data.result) {
+                    $scope.data = $scope.data.concat(data.result);
+                }
+            })
+        }, 1000)
     }
 
     angular
