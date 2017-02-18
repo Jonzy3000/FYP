@@ -16,6 +16,11 @@
                     if (data.result) {
                         $scope.compareData = _.sortBy(data.result, 'date');
                         $scope.compareData = convertTimeStampsToDate($scope.compareData);
+
+                        if ($scope.series.length > 1) {
+                            $scope.series.pop();
+                        }
+
                         $scope.series.push(roomsToCompare[0].name);
                         $scope.updateData();
                     }
@@ -139,6 +144,7 @@
         ];
 
         $scope.options = chartOptionsFactory.options;
+        $scope.colours = chartOptionsFactory.colours;
     };
 
     angular
