@@ -8,7 +8,7 @@ function SqlApiQueries() {
         });
     }
 
-    var updateTransID = function() {
+    var updateTransID = function () {
         transID = uuid;
     }
 
@@ -29,20 +29,43 @@ function SqlApiQueries() {
 
                 updateTransID();
 
-                if (!result.length) {
-                    var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?)";
-                    con.query(query, [roomName, occupancy, maxOccupancy], createRoomCounterTable.bind(null, con, roomName));
-                } else {
-                    var id = result[0].id;
-                    var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE ID = ?";
-                    con.query(query, [maxOccupancy, id], handleQueryResult.bind(null, con));
-                }
+                doesTableExist(roomName, function (exist) {
+                    if (!exist) {
+                        createRoomCounterTable(con, roomName, err);
+                    }
+
+                    connection.acquire(function (err, con) {
+                        if (!result.length) {
+                            var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?)";
+                            con.query(query, [roomName, occupancy, maxOccupancy], handleQueryResult.bind(null, con, roomName));
+                        } else {
+                            var id = result[0].id;
+                            var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE ID = ?";
+                            con.query(query, [maxOccupancy, id], handleQueryResult.bind(null, con));
+                        }
+                    });
+                });
             });
         });
 
         if (res) {
             res.send();
         }
+    }
+
+    var doesTableExist = function (tableName, callback) {
+        connection.acquire(function (error, con) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+
+            var query = "SELECT 1 FROM `" + tableName + "` LIMIT 1";
+            con.query(query, function (err) {
+                con.release();
+                callback(!err);
+            })
+        })
     }
 
     var jsStringDateToMySQLDate = function (date) {
@@ -66,7 +89,8 @@ function SqlApiQueries() {
 
                 if (!result) {
                     console.log("CANNOT FIND ROOM " + roomName);
-                    return
+                    con.release();
+                    return;
                 }
 
                 updateTransID();
@@ -227,7 +251,7 @@ function SqlApiQueries() {
     }
 
     this.generateRandomData = function (test, res) {
-        var roomName = "test";
+        var roomName = "4E 1.2";
         var _this = this;
         var req = {
             "body": {
@@ -243,11 +267,15 @@ function SqlApiQueries() {
                 "body": {
                     "name": roomName,
                     "date": date,
-                    "incrementBy": randomSingedNumber(10)
+                    "incrementBy": randomSingedNumber(5)
                 }
             }
 
-            _this.updateCounter(req, res);
+            try {
+                _this.updateCounter(req, res);
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 }

@@ -1,12 +1,26 @@
 (function () {
     "use strict"
 
-    var chartsCtrl = function ($scope, $state, roomsApi, $interval) {
+    var chartsCtrl = function ($scope, $state, roomsApi, $interval, chartDataService, chartOptionsFactory) {
         $scope.roomName = $state.params.room;
         var maxOccupancy = $state.params.maxOccupancy;
         console.log(maxOccupancy);
         if ($scope.roomName == null || $scope.roomName == 'default') {
             $scope.roomName = localStorage.getItem("roomName");
+        }
+
+        $scope.onUpdateOfRoomsToCompare = function (roomsToCompare) {
+            console.log(roomsToCompare);
+            if (roomsToCompare.length > 0) {
+                roomsApi.getRoom(roomsToCompare[0].name).then(function (data) {
+                    if (data.result) {
+                        $scope.compareData = _.sortBy(data.result, 'date');
+                        $scope.compareData = convertTimeStampsToDate($scope.compareData);
+                        $scope.series.push(roomsToCompare[0].name);
+                        $scope.updateData();
+                    }
+                });
+            }
         }
 
         localStorage.setItem("roomName", $scope.roomName);
@@ -22,7 +36,7 @@
             if (data.result) {
                 $scope.data = data.result;
                 _.sortBy($scope.data, 'date');
-                convertTimeStampsToDate();
+                $scope.data = convertTimeStampsToDate($scope.data);
             }
         }
 
@@ -40,51 +54,15 @@
         $scope.startDate.setHours(0, 0, 0, 0);
 
         var dateThreshold;
-        var numberOfDataPoints = 75;
-
-        var isDateToBeDispalyed = function (dateDiff) {
-            return dateDiff > 0 && dateThreshold - $scope.startDate >= dateDiff;
-        }
-
-        var smoothData = function (rawDisplayedData) {
-            var step = Math.round(rawDisplayedData.length / numberOfDataPoints);
-            var smoothedData = [];
-            for (var i = 0, length = rawDisplayedData.length; i < length; i++) {
-                if (i % step == 0) {
-                    smoothedData.push(rawDisplayedData[i]);
-                }
-            }
-
-            return smoothedData;
-        }
-
-        var getPercentage = function (val) {
-            return Math.round(val / maxOccupancy * 100 * 10) / 10;
-        }
-
-        var averageDisplayedData = function (rawDisplayedData) {
-            $scope.labels = [];
-            $scope.displayedData = [[]];
-
-            rawDisplayedData = _.sortBy(rawDisplayedData, 'date');
-            if (rawDisplayedData.length > numberOfDataPoints) {
-                rawDisplayedData = smoothData(rawDisplayedData);
-            }
-
-            for (var i = 0; i < rawDisplayedData.length; i++) {
-                $scope.labels.push(moment(rawDisplayedData[i].date));
-                $scope.displayedData[0].push(getPercentage(rawDisplayedData[i].occupancy));
-            }
-        }
 
         $scope.updateData = function () {
-            var rawDisplayedData = _.filter($scope.data, function (entry) {
-                var dateDiff = entry.date - $scope.startDate;
-                return isDateToBeDispalyed(dateDiff);
-            });
-
-            console.log(rawDisplayedData.length);
-            averageDisplayedData(rawDisplayedData);
+            var data = chartDataService.updateData($scope.data, $scope.startDate, dateThreshold);
+            $scope.labels = data.labels;
+            $scope.displayedData = [data.data];
+            if ($scope.compareData) {
+                data = chartDataService.updateData($scope.compareData, $scope.startDate, dateThreshold);
+                $scope.displayedData.push(data.data);
+            }
         }
 
         function addDays(date, days) {
@@ -133,14 +111,16 @@
             $scope.updateData();
         }
 
-        var convertTimeStampsToDate = function () {
-            _.each($scope.data, function (entry) {
+        var convertTimeStampsToDate = function (data) {
+            _.each(data, function (entry) {
                 if (entry.timestamp == null) {
                     return;
                 }
 
                 entry.date = new Date(entry.timestamp);
-            })
+            });
+
+            return data;
         }
 
         $scope.back = function () {
@@ -158,47 +138,7 @@
             $scope.roomName
         ];
 
-        $scope.options = {
-            legend: {
-                display: true,
-            },
-            tooltips: {
-                callbacks: {
-                    label: function (tooltipItem) {
-                        return tooltipItem.yLabel + "%";
-                    }
-                }
-            },
-            scales: {
-                yAxes: [
-                    {
-                        id: 'y-axis-1',
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Occupancy (%)'
-                        }
-                    }
-                ],
-                xAxes: [{
-                    type: 'time',
-                    ticks: {
-                        autoSkip: true,
-                        maxTicksLimit: 15
-                    },
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            hour: 'H:mm',
-                            day: 'ddd Do MMM',
-                            week: 'ddd Do MMM'
-                        }
-                    }
-                }]
-            }
-        };
+        $scope.options = chartOptionsFactory.options;
     };
 
     angular

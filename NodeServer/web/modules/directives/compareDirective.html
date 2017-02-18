@@ -1,0 +1,10 @@
+<div class="btn-group" uib-dropdown is-open="compareMenuIsOpen">
+    <button class="btn btn-danger" uib-dropdown-toggle> 
+                    Compare <span class="caret"></span>
+                </button>
+    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+        <li ng-repeat="room in rooms" role="menuitem" ng-click="compareRoom(room)">
+            <a href="">{{room.name}}</a>
+        </li>
+    </ul>
+</div>
