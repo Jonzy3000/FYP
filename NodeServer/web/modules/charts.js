@@ -39,9 +39,22 @@
         var onNewData = function (data) {
             transID = data.id;
             if (data.result) {
+                console.log(data.result);
                 $scope.data = data.result;
                 _.sortBy($scope.data, 'date');
                 $scope.data = convertTimeStampsToDate($scope.data);
+                $scope.updateData();
+            }
+        }
+
+        var onUpdateData = function (data) {
+            transID = data.id;
+            console.log(data.result);
+            if (data.result) {
+                var newData = convertTimeStampsToDate(data.result);
+                $scope.data = $scope.data.concat(data.result);
+                _.sortBy($scope.data, 'date');
+                $scope.updateData();
             }
         }
 
@@ -49,8 +62,10 @@
         roomsApi.getRoom($scope.roomName, transID).then(onNewData);
 
         var interval = $interval(function () {
-            roomsApi.getRoomWithDateRange($scope.roomName, $scope.data[$scope.data.length - 1].date, new Date(), transID)
-                .then(onNewData);
+            if ($scope.data.length > 0) {
+                roomsApi.getRoomWithDateRange($scope.roomName, $scope.data[$scope.data.length - 1].date, new Date(), transID)
+                    .then(onUpdateData);
+            }
         }, 5000);
 
         //http://www.chartjs.org/docs/#time-scale
