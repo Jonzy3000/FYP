@@ -4,9 +4,9 @@
     var chartsCtrl = function ($scope, $state, roomsApi, $interval, chartDataService, chartOptionsFactory) {
         $scope.roomName = $state.params.room;
         var maxOccupancy = $state.params.maxOccupancy;
-        console.log(maxOccupancy);
         if ($scope.roomName == null || $scope.roomName == 'default') {
             $scope.roomName = localStorage.getItem("roomName");
+            maxOccupancy = localStorage.getItem("maxOccupancy");
         }
 
         $scope.onUpdateOfRoomsToCompare = function (roomsToCompare) {
@@ -29,28 +29,16 @@
         }
 
         localStorage.setItem("roomName", $scope.roomName);
+        localStorage.setItem("maxOccupancy", maxOccupancy);
 
         $scope.startDateOpened = false;
         $scope.openStartDate = function () {
             $scope.startDateOpened = true;
         }
 
-
         var onNewData = function (data) {
             transID = data.id;
-            if (data.result) {
-                console.log(data.result);
-                $scope.data = data.result;
-                _.sortBy($scope.data, 'date');
-                $scope.data = convertTimeStampsToDate($scope.data);
-                $scope.updateData();
-            }
-        }
-
-        var onUpdateData = function (data) {
-            transID = data.id;
-            console.log(data.result);
-            if (data.result) {
+            if (data.result && data.result.length > 0) {
                 var newData = convertTimeStampsToDate(data.result);
                 $scope.data = $scope.data.concat(data.result);
                 _.sortBy($scope.data, 'date');
@@ -59,12 +47,20 @@
         }
 
         var transID = 0;
-        roomsApi.getRoom($scope.roomName, transID).then(onNewData);
+        roomsApi.getRoom($scope.roomName, transID).then(function (data) {
+            transID = data.id;
+            if (data.result) {
+                $scope.data = data.result;
+                $scope.data = convertTimeStampsToDate($scope.data);
+                _.sortBy($scope.data, 'date');
+                $scope.updateData();
+            }
+        });
 
         var interval = $interval(function () {
             if ($scope.data.length > 0) {
                 roomsApi.getRoomWithDateRange($scope.roomName, $scope.data[$scope.data.length - 1].date, new Date(), transID)
-                    .then(onUpdateData);
+                    .then(onNewData);
             }
         }, 5000);
 
@@ -76,7 +72,7 @@
         var dateThreshold;
 
         $scope.updateData = function () {
-            var data = chartDataService.updateData($scope.data, $scope.startDate, dateThreshold);
+            var data = chartDataService.updateData($scope.data, $scope.startDate, dateThreshold, maxOccupancy);
             $scope.labels = data.labels;
             $scope.displayedData = [data.data];
             if ($scope.compareData) {
@@ -160,6 +156,8 @@
 
         $scope.options = chartOptionsFactory.options;
         $scope.colours = chartOptionsFactory.colours;
+
+        $scope.updateGraphAxis($scope.graphXAxisConfig);
     };
 
     angular

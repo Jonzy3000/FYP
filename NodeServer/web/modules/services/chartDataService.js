@@ -44,8 +44,8 @@
             return dateDiff > 0 && dateThreshold - startDate >= dateDiff;
         }
 
-        this.updateData = function (data, startDate, dateThreshold, maxOccupancy) {
-            maxOccupancy = maxOccupancy;
+        this.updateData = function (data, startDate, dateThreshold, maxOccupancy_) {
+            maxOccupancy = maxOccupancy_;
             var rawDisplayedData = _.filter(data, function (entry) {
                 var dateDiff = entry.date - startDate;
                 return isDateToBeDispalyed(dateDiff, startDate, dateThreshold);

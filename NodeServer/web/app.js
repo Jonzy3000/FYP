@@ -28,7 +28,7 @@
                             }
                         },
                         params: {
-                            maxOccupancy: 15,
+                            maxOccupancy: null,
                             room: null
                         }
                     })
