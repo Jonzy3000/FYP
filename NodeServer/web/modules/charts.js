@@ -76,7 +76,7 @@
             $scope.labels = data.labels;
             $scope.displayedData = [data.data];
             if ($scope.compareData) {
-                data = chartDataService.updateData($scope.compareData, $scope.startDate, dateThreshold);
+                data = chartDataService.updateData($scope.compareData, $scope.startDate, dateThreshold, maxOccupancy);
                 $scope.displayedData.push(data.data);
             }
         }
