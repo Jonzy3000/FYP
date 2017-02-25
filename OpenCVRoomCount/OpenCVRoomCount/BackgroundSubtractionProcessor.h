@@ -91,9 +91,10 @@ public:
 
 			cv::putText(frame, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
 
-			cv::imshow("morphClose", morphClose);
-			cv::imshow("morphOpen", morphOpen);
-			cv::imshow("threshold", thresh);
+			//cv::imshow("morphClose", morphClose);
+			//cv::imshow("morphOpen", morphOpen);
+			cv::imshow("mog", frameMOG2);
+			cv::imshow("thresh", thresh);
 			cv::imshow("frame", frame);
 		}
 	}

@@ -11,7 +11,7 @@ class PeopleCounter
 {
 public:
 	void start() {
-		cv::VideoCapture vc = cv::VideoCapture("..\\video\\People Counting Video Analytics.mp4");
+		cv::VideoCapture vc = cv::VideoCapture("..\\video\\peopleCounter.avi");
 		JSONReader jsonReader("../config/config.json");
 		auto config = jsonReader.getConfigOptions();
 		BackgroundSubtractionProcessor op(vc, config);
