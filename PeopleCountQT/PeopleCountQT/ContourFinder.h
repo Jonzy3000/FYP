@@ -1,6 +1,5 @@
 #pragma once
 #include <opencv2/opencv.hpp>
-#include <opencv2/tracking.hpp>
 /*
 bool doesBoxIntersectOnTheXYAxis(BoundingBox box) {
 return fabs(x - box.x) * 2 < width + box.width &&

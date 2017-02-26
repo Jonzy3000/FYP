@@ -127,6 +127,16 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBoxRegulator.h" />
+    <ClInclude Include="BoundingBoxTracker.h" />
+    <ClInclude Include="BoundingBoxUtils.h" />
+    <ClInclude Include="ContourFinder.h" />
+    <ClInclude Include="CountingLines.h" />
+    <ClInclude Include="CountManager.h" />
+    <ClInclude Include="Direction.h" />
+    <ClInclude Include="FPSCounter.h" />
+    <ClInclude Include="HSIVector.h" />
+    <ClInclude Include="HttpPostRequests.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="JSONReader.h" />
     <CustomBuild Include="Player.h">
