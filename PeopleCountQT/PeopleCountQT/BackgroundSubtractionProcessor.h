@@ -16,7 +16,6 @@ public:
 	}
 
 	cv::Mat process(cv::Mat & frame) {
-		cv::Mat frameMOG2;
 		pMOG2->apply(frame, frameMOG2);
 
 		CountingLines countingLines(pCalibrationOptions->getCountingLinesConfig());
@@ -30,7 +29,6 @@ public:
 		auto morphCloseKernel = pCalibrationOptions->getBlobExtractionConfg()->morphCloseKernelSize;
 		auto thresholdValue = pCalibrationOptions->getBlobExtractionConfg()->thresholdValue;
 
-		cv::Mat thresh, morphOpen, morphClose;
 		cv::threshold(frameMOG2, thresh, thresholdValue, 255, cv::THRESH_BINARY);
 		cv::morphologyEx(thresh, morphOpen, cv::MORPH_OPEN, cv::Mat::ones(cv::Size(morphOpenKernel, morphOpenKernel), CV_8U));
 		cv::morphologyEx(morphOpen, morphClose, cv::MORPH_CLOSE, cv::Mat::ones(cv::Size(morphCloseKernel, morphCloseKernel), CV_8U));
@@ -61,6 +59,26 @@ public:
 		cv::putText(frame, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
 
 
+		return getImageToShow(frame);
+	}
+
+	const cv::Mat getImageToShow(const cv::Mat & frame) {
+		if (imageToShow == "Output") {
+			return frame;
+		} 
+		if (imageToShow == "Threshold") {
+			return thresh;
+		}
+		if (imageToShow == "Background Subtraction") {
+			return frameMOG2;
+		}
+		if (imageToShow == "Morph Open") {
+			return morphOpen;
+		}
+		if (imageToShow == "Morph Close") {
+			return morphClose;
+		}
+
 		return frame;
 	}
 
@@ -69,6 +87,7 @@ public:
 	}
 
 private:
+	cv::Mat thresh, morphOpen, morphClose, frameMOG2;
 	cv::Ptr<cv::BackgroundSubtractorMOG2> pMOG2;
 	const std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 	FPSCounter fpsCounter = FPSCounter();

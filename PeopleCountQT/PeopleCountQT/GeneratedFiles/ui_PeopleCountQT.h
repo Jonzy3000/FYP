@@ -43,8 +43,8 @@ public:
     QVBoxLayout *verticalLayout_4;
     QGroupBox *groupBox_19;
     QFormLayout *formLayout_6;
-    QLabel *label_35;
-    QComboBox *comboBox_3;
+    QLabel *label_2;
+    QComboBox *imageName;
     QGroupBox *groupBox_14;
     QFormLayout *formLayout;
     QLabel *label_24;
@@ -115,7 +115,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents_3 = new QWidget();
         scrollAreaWidgetContents_3->setObjectName(QStringLiteral("scrollAreaWidgetContents_3"));
-        scrollAreaWidgetContents_3->setGeometry(QRect(0, -73, 281, 621));
+        scrollAreaWidgetContents_3->setGeometry(QRect(0, 0, 281, 621));
         verticalLayout_3 = new QVBoxLayout(scrollAreaWidgetContents_3);
         verticalLayout_3->setSpacing(6);
         verticalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -132,15 +132,15 @@ public:
         formLayout_6->setSpacing(6);
         formLayout_6->setContentsMargins(11, 11, 11, 11);
         formLayout_6->setObjectName(QStringLiteral("formLayout_6"));
-        label_35 = new QLabel(groupBox_19);
-        label_35->setObjectName(QStringLiteral("label_35"));
+        label_2 = new QLabel(groupBox_19);
+        label_2->setObjectName(QStringLiteral("label_2"));
 
-        formLayout_6->setWidget(0, QFormLayout::LabelRole, label_35);
+        formLayout_6->setWidget(0, QFormLayout::LabelRole, label_2);
 
-        comboBox_3 = new QComboBox(groupBox_19);
-        comboBox_3->setObjectName(QStringLiteral("comboBox_3"));
+        imageName = new QComboBox(groupBox_19);
+        imageName->setObjectName(QStringLiteral("imageName"));
 
-        formLayout_6->setWidget(0, QFormLayout::FieldRole, comboBox_3);
+        formLayout_6->setWidget(0, QFormLayout::FieldRole, imageName);
 
 
         verticalLayout_4->addWidget(groupBox_19);
@@ -371,9 +371,9 @@ public:
         PeopleCountQTClass->setWindowTitle(QApplication::translate("PeopleCountQTClass", "PeopleCountQT", Q_NULLPTR));
         groupBox_13->setTitle(QApplication::translate("PeopleCountQTClass", "Calibration", Q_NULLPTR));
         groupBox_19->setTitle(QApplication::translate("PeopleCountQTClass", "Show Image", Q_NULLPTR));
-        label_35->setText(QApplication::translate("PeopleCountQTClass", "Image Name", Q_NULLPTR));
-        comboBox_3->clear();
-        comboBox_3->insertItems(0, QStringList()
+        label_2->setText(QApplication::translate("PeopleCountQTClass", "Image Name", Q_NULLPTR));
+        imageName->clear();
+        imageName->insertItems(0, QStringList()
          << QApplication::translate("PeopleCountQTClass", "Output", Q_NULLPTR)
          << QApplication::translate("PeopleCountQTClass", "Threshold", Q_NULLPTR)
          << QApplication::translate("PeopleCountQTClass", "Background Subtraction", Q_NULLPTR)

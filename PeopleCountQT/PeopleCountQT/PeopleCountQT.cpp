@@ -57,7 +57,9 @@ void PeopleCountQT::connectLoadedCalibrationOptions() {
 	});
 
 	QObject::connect(pCalibrationLoader.get(), &CalibrationLoader::countingLinesUpdate, this, [this](std::string orientation, int outlinePercentage, int inLinePercentage) {
-		this->ui.orientation->setCurrentText(QString::fromStdString(orientation));
+		int index = this->ui.orientation->findText(QString::fromStdString(orientation), Qt::MatchFixedString);
+
+		this->ui.orientation->setCurrentIndex(index);
 		this->ui.outLinePercentage->setValue(outlinePercentage);
 		this->ui.inLinePercentage->setValue(inLinePercentage);
 
@@ -109,6 +111,8 @@ void PeopleCountQT::connectCalibrationOptions() {
 	QObject::connect(ui.maxHeight, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
 		this->pCalibrationOptions->getPeopleThresholdSize()->maxHeight = value;
 	});
+
+	QObject::connect(ui.imageName, &QComboBox::currentTextChanged, pPlayer.get(), &Player::onImageNameChange);
 }
 
 

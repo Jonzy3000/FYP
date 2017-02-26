@@ -1,8 +1,10 @@
 #include "Player.h"
 #include <chrono>
 #include <thread>
+#include <QTime>
+#include <iostream>
 
-
+typedef std::chrono::high_resolution_clock Clock;
 /*
 http://codingexodus.blogspot.co.uk/2012/12/working-with-video-using-opencv-and-qt.html
 */
@@ -39,17 +41,21 @@ void Player::Play()
 
 void Player::run()
 {
-	int delay = (1000 / frameRate);
 	while (!stop) {
+		int delay = (1000 / frameRate);
+
 		if (!capture.read(frame) || frame.empty())
 		{
 			stop = true;
 			return;
 		}
 
+		auto now = Clock::now();
 
 		//perform algorithm
 		frame = pBackgroundSubtractionProcessor->process(frame);
+
+		delay -= std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - now).count();
 
 		if (frame.channels() == 3) {
 			cv::cvtColor(frame, RGBframe, CV_BGR2RGB);
@@ -90,4 +96,9 @@ bool Player::isStopped() const {
 
 void Player::setCalibrationOptions(const std::shared_ptr<CalibrationOptions>& pCalibrationOptions_) {
 	pCalibrationOptions = pCalibrationOptions_;
+}
+
+void Player::onImageNameChange(QString imageName_)
+{
+	pBackgroundSubtractionProcessor->onChangeOfImageToShow(imageName_.toStdString());
 }

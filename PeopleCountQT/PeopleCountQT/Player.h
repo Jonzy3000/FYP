@@ -35,6 +35,7 @@ public:
 	bool isStopped() const;
 
 	void setCalibrationOptions(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions_);
+	void onImageNameChange(QString imageName);
 
 private:
 	bool stop;

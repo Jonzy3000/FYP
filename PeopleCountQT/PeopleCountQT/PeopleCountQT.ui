@@ -57,7 +57,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-73</y>
+         <y>0</y>
          <width>281</width>
          <height>621</height>
         </rect>
@@ -76,14 +76,14 @@
              </property>
              <layout class="QFormLayout" name="formLayout_6">
               <item row="0" column="0">
-               <widget class="QLabel" name="label_35">
+               <widget class="QLabel" name="label_2">
                 <property name="text">
                  <string>Image Name</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QComboBox" name="comboBox_3">
+               <widget class="QComboBox" name="imageName">
                 <item>
                  <property name="text">
                   <string>Output</string>
