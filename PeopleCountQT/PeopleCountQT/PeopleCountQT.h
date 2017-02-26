@@ -1,10 +1,14 @@
 #pragma once
 
+
+#include <memory>
 #include <QtWidgets/QMainWindow>
 #include "ui_PeopleCountQT.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <Player.h>
+#include "CalibrationOptions.h"
+#include "CalibrationLoader.h"
 
 class PeopleCountQT : public QMainWindow
 {
@@ -21,5 +25,9 @@ private slots:
 
 private:
 	Ui::PeopleCountQTClass ui;
-	Player* pPlayer;
+	std::shared_ptr<Player> pPlayer;
+	std::shared_ptr<CalibrationOptions> pCalibrationOptions = std::make_shared<CalibrationOptions>();
+	std::shared_ptr<CalibrationLoader> pCalibrationLoader = std::make_shared<CalibrationLoader>();
+	void connectCalibrationOptions();
+	void connectLoadedCalibrationOptions();
 };

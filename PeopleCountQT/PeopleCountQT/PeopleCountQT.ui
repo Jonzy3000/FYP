@@ -57,7 +57,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-73</y>
          <width>281</width>
          <height>621</height>
         </rect>
@@ -133,7 +133,7 @@
                  <number>1000</number>
                 </property>
                 <property name="value">
-                 <number>400</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -173,7 +173,7 @@
                  <number>30</number>
                 </property>
                 <property name="value">
-                 <number>7</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -183,7 +183,7 @@
                  <number>30</number>
                 </property>
                 <property name="value">
-                 <number>3</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -193,7 +193,7 @@
                  <number>255</number>
                 </property>
                 <property name="value">
-                 <number>240</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -250,7 +250,7 @@
                  <number>100</number>
                 </property>
                 <property name="value">
-                 <number>80</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -260,7 +260,7 @@
                  <number>100</number>
                 </property>
                 <property name="value">
-                 <number>80</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -299,7 +299,7 @@
                  <number>500</number>
                 </property>
                 <property name="value">
-                 <number>110</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -309,7 +309,7 @@
                  <number>500</number>
                 </property>
                 <property name="value">
-                 <number>175</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -349,7 +349,7 @@
                  <number>65536</number>
                 </property>
                 <property name="value">
-                 <number>8080</number>
+                 <number>0</number>
                 </property>
                </widget>
               </item>

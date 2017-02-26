@@ -115,7 +115,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents_3 = new QWidget();
         scrollAreaWidgetContents_3->setObjectName(QStringLiteral("scrollAreaWidgetContents_3"));
-        scrollAreaWidgetContents_3->setGeometry(QRect(0, 0, 281, 621));
+        scrollAreaWidgetContents_3->setGeometry(QRect(0, -73, 281, 621));
         verticalLayout_3 = new QVBoxLayout(scrollAreaWidgetContents_3);
         verticalLayout_3->setSpacing(6);
         verticalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -159,7 +159,7 @@ public:
         minArea = new QSpinBox(groupBox_14);
         minArea->setObjectName(QStringLiteral("minArea"));
         minArea->setMaximum(1000);
-        minArea->setValue(400);
+        minArea->setValue(0);
 
         formLayout->setWidget(1, QFormLayout::FieldRole, minArea);
 
@@ -190,21 +190,21 @@ public:
         closeKernelSize = new QSpinBox(groupBox_15);
         closeKernelSize->setObjectName(QStringLiteral("closeKernelSize"));
         closeKernelSize->setMaximum(30);
-        closeKernelSize->setValue(7);
+        closeKernelSize->setValue(0);
 
         formLayout_2->setWidget(1, QFormLayout::FieldRole, closeKernelSize);
 
         openKernelSize = new QSpinBox(groupBox_15);
         openKernelSize->setObjectName(QStringLiteral("openKernelSize"));
         openKernelSize->setMaximum(30);
-        openKernelSize->setValue(3);
+        openKernelSize->setValue(0);
 
         formLayout_2->setWidget(3, QFormLayout::FieldRole, openKernelSize);
 
         thresholdValue = new QSpinBox(groupBox_15);
         thresholdValue->setObjectName(QStringLiteral("thresholdValue"));
         thresholdValue->setMaximum(255);
-        thresholdValue->setValue(240);
+        thresholdValue->setValue(0);
 
         formLayout_2->setWidget(5, QFormLayout::FieldRole, thresholdValue);
 
@@ -240,14 +240,14 @@ public:
         inLinePercentage = new QSpinBox(groupBox_16);
         inLinePercentage->setObjectName(QStringLiteral("inLinePercentage"));
         inLinePercentage->setMaximum(100);
-        inLinePercentage->setValue(80);
+        inLinePercentage->setValue(0);
 
         formLayout_3->setWidget(3, QFormLayout::FieldRole, inLinePercentage);
 
         outLinePercentage = new QSpinBox(groupBox_16);
         outLinePercentage->setObjectName(QStringLiteral("outLinePercentage"));
         outLinePercentage->setMaximum(100);
-        outLinePercentage->setValue(80);
+        outLinePercentage->setValue(0);
 
         formLayout_3->setWidget(5, QFormLayout::FieldRole, outLinePercentage);
 
@@ -278,14 +278,14 @@ public:
         maxWidth = new QSpinBox(groupBox_17);
         maxWidth->setObjectName(QStringLiteral("maxWidth"));
         maxWidth->setMaximum(500);
-        maxWidth->setValue(110);
+        maxWidth->setValue(0);
 
         formLayout_4->setWidget(1, QFormLayout::FieldRole, maxWidth);
 
         maxHeight = new QSpinBox(groupBox_17);
         maxHeight->setObjectName(QStringLiteral("maxHeight"));
         maxHeight->setMaximum(500);
-        maxHeight->setValue(175);
+        maxHeight->setValue(0);
 
         formLayout_4->setWidget(3, QFormLayout::FieldRole, maxHeight);
 
@@ -316,7 +316,7 @@ public:
         portNumber = new QSpinBox(groupBox_18);
         portNumber->setObjectName(QStringLiteral("portNumber"));
         portNumber->setMaximum(65536);
-        portNumber->setValue(8080);
+        portNumber->setValue(0);
 
         formLayout_5->setWidget(3, QFormLayout::FieldRole, portNumber);
 

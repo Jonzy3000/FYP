@@ -6,19 +6,14 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <memory>
+#include "BackgroundSubtractionProcessor.h"
+#include "CalibrationOptions.h"
+
 using namespace cv;
 class Player : public QThread
 {
 	Q_OBJECT
-private:
-	bool stop;
-	QMutex mutex;
-	QWaitCondition condition;
-	Mat frame;
-	int frameRate;
-	VideoCapture capture;
-	Mat RGBframe;
-	QImage img;
 signals:
 	//Signal to output frame to be displayed
 	void processedImage(const QImage &image);
@@ -38,4 +33,18 @@ public:
 	void Stop();
 	//check if the player has been stopped
 	bool isStopped() const;
+
+	void setCalibrationOptions(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions_);
+
+private:
+	bool stop;
+	QMutex mutex;
+	QWaitCondition condition;
+	Mat frame;
+	int frameRate;
+	VideoCapture capture;
+	Mat RGBframe;
+	QImage img;
+	std::shared_ptr<BackgroundSubtractionProcessor> pBackgroundSubtractionProcessor;
+	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 };
