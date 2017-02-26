@@ -1,6 +1,4 @@
 #pragma once
-#ifndef PLAYER_H
-#define PLAYER_H
 #include <QMutex>
 #include <QThread>
 #include <QImage>
@@ -41,4 +39,3 @@ public:
 	//check if the player has been stopped
 	bool isStopped() const;
 };
-#endif // VIDEOPLAYER_H

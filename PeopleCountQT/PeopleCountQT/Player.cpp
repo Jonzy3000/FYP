@@ -2,6 +2,11 @@
 #include <chrono>
 #include <thread>
 
+
+/*
+http://codingexodus.blogspot.co.uk/2012/12/working-with-video-using-opencv-and-qt.html
+*/
+
 Player::Player(QObject *parent)
 	: QThread(parent)
 {
@@ -38,6 +43,8 @@ void Player::run()
 		{
 			stop = true;
 		}
+
+
 		if (frame.channels() == 3) {
 			cv::cvtColor(frame, RGBframe, CV_BGR2RGB);
 			img = QImage((const unsigned char*)(RGBframe.data),
