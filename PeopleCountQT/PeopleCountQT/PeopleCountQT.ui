@@ -33,28 +33,6 @@
     <property name="horizontalSpacing">
      <number>15</number>
     </property>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>720</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">Background-color: #000;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="1">
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
@@ -81,7 +59,7 @@
          <x>0</x>
          <y>0</y>
          <width>281</width>
-         <height>562</height>
+         <height>621</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -91,6 +69,51 @@
            <string>Calibration</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="groupBox_19">
+             <property name="title">
+              <string>Show Image</string>
+             </property>
+             <layout class="QFormLayout" name="formLayout_6">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_35">
+                <property name="text">
+                 <string>Image Name</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="comboBox_3">
+                <item>
+                 <property name="text">
+                  <string>Output</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Threshold</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Background Subtraction</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Morph Open</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Morph Close</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
            <item>
             <widget class="QGroupBox" name="groupBox_14">
              <property name="title">
@@ -105,7 +128,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QSpinBox" name="spinBox_19">
+               <widget class="QSpinBox" name="minArea">
                 <property name="maximum">
                  <number>1000</number>
                 </property>
@@ -145,7 +168,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QSpinBox" name="spinBox_20">
+               <widget class="QSpinBox" name="closeKernelSize">
                 <property name="maximum">
                  <number>30</number>
                 </property>
@@ -155,7 +178,7 @@
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QSpinBox" name="spinBox_21">
+               <widget class="QSpinBox" name="openKernelSize">
                 <property name="maximum">
                  <number>30</number>
                 </property>
@@ -165,7 +188,7 @@
                </widget>
               </item>
               <item row="5" column="1">
-               <widget class="QSpinBox" name="spinBox_22">
+               <widget class="QSpinBox" name="thresholdValue">
                 <property name="maximum">
                  <number>255</number>
                 </property>
@@ -205,14 +228,24 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QComboBox" name="comboBox_3">
+               <widget class="QComboBox" name="orientation">
                 <property name="currentText">
-                 <string/>
+                 <string>Vertical</string>
                 </property>
+                <item>
+                 <property name="text">
+                  <string>Vertical</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Horizontal</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QSpinBox" name="spinBox_23">
+               <widget class="QSpinBox" name="inLinePercentage">
                 <property name="maximum">
                  <number>100</number>
                 </property>
@@ -222,7 +255,7 @@
                </widget>
               </item>
               <item row="5" column="1">
-               <widget class="QSpinBox" name="spinBox_24">
+               <widget class="QSpinBox" name="outLinePercentage">
                 <property name="maximum">
                  <number>100</number>
                 </property>
@@ -261,7 +294,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QSpinBox" name="spinBox_25">
+               <widget class="QSpinBox" name="maxWidth">
                 <property name="maximum">
                  <number>500</number>
                 </property>
@@ -271,7 +304,7 @@
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QSpinBox" name="spinBox_26">
+               <widget class="QSpinBox" name="maxHeight">
                 <property name="maximum">
                  <number>500</number>
                 </property>
@@ -304,14 +337,14 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QLineEdit" name="lineEdit_3">
+               <widget class="QLineEdit" name="ipAddress">
                 <property name="inputMask">
                  <string>000.000.000.000;_</string>
                 </property>
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QSpinBox" name="spinBox_27">
+               <widget class="QSpinBox" name="portNumber">
                 <property name="maximum">
                  <number>65536</number>
                 </property>
@@ -330,12 +363,45 @@
       </widget>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QPushButton" name="loadVideo">
+    <item row="3" column="0">
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>720</width>
+        <height>480</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">Background-color: #000;</string>
+      </property>
       <property name="text">
-       <string>Load Video</string>
+       <string/>
       </property>
      </widget>
+    </item>
+    <item row="5" column="1" rowspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="loadVideo">
+        <property name="text">
+         <string>Load Video</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
