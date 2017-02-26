@@ -94,11 +94,13 @@ function SqlApiQueries() {
                 }
 
                 updateTransID();
-                var occupancy = Number(result[0].occupancy) + Number(incrementBy);
-                var id = result[0].id;
-                var query = "UPDATE " + roomsTableName + " SET occupancy = ? WHERE ID = ? ;"
-                query += " INSERT INTO `" + roomName + "` VALUES(NULL,?,?) "
-                con.query(query, [occupancy, id, timestamp, occupancy], handleQueryResult.bind(null, con));
+                if (result.length > 0) {
+                    var occupancy = Number(result[0].occupancy) + Number(incrementBy);
+                    var id = result[0].id;
+                    var query = "UPDATE " + roomsTableName + " SET occupancy = ? WHERE ID = ? ;"
+                    query += " INSERT INTO `" + roomName + "` VALUES(NULL,?,?) "
+                    con.query(query, [occupancy, id, timestamp, occupancy], handleQueryResult.bind(null, con));
+                }
 
             });
         });

@@ -16,6 +16,7 @@
 <div class="center-content">
     <div class="row">
         <div class="col-xs-5">
+            <label>
             Start Date:
             <div class=" input-group ">
                 <input type="text" class="form-control" maxDate="endDate" ng-change="updateGraphAxis(graphXAxisConfig)" uib-datepicker-popup="dd/MM/yyyy"
@@ -26,23 +27,26 @@
             </button>
         </span>
             </div>
+            </label>
         </div>
         <div class="col-xs-5">
+            <label>
             X Axis:
             <br>
-            <div class="btn-group" uib-dropdown is-open="graphXAxisDropdownIsOpen">
-                <button class="btn btn-default" uib-dropdown-toggle> 
-                    {{graphXAxisConfig}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li ng-repeat="option in graphXAxisOptions" role="menuitem" ng-click="updateGraphAxis(option)">
-                        <a href="">{{option}}</a>
-                    </li>
-                </ul>
-            </div>
+                <div class="btn-group" uib-dropdown is-open="graphXAxisDropdownIsOpen">
+                    <button class="btn btn-default" uib-dropdown-toggle> 
+                        {{graphXAxisConfig}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                        <li ng-repeat="option in graphXAxisOptions" role="menuitem" ng-click="updateGraphAxis(option)">
+                            <a href="">{{option}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </label>
         </div>
         <div class="col-xs-2">
-            <compare-directive callback="onUpdateOfRoomsToCompare(rooms)"></compare-directive>
+            <compare-directive callback="onUpdateOfRoomsToCompare(rooms)" ignore="roomName"></compare-directive>
         </div>
     </div>
 </div>

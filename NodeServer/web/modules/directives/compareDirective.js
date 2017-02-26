@@ -4,7 +4,8 @@
     var comapreDirective = function (roomsApi) {
         return {
             scope: {
-                callback: '&'
+                callback: '&',
+                ignore: '='
             },
             templateUrl: 'modules/directives/compareDirective.html',
             link: function (scope, element, attrs) {
@@ -12,7 +13,10 @@
                 scope.rooms = [];
                 roomsApi.getAllRooms().then(function (data) {
                     console.log(data);
-                    scope.rooms = data.result;
+                    scope.rooms = _.filter(data.result, function (room) {
+                        return room.name != scope.ignore;
+                    });
+
                 });
 
                 scope.compareRoom = function (room) {
