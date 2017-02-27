@@ -79,7 +79,7 @@ public:
     QSpinBox *portNumber;
     QLabel *label;
     QHBoxLayout *horizontalLayout;
-    QPushButton *pushButton;
+    QPushButton *saveButton;
     QPushButton *loadVideo;
     QMenuBar *menuBar;
 
@@ -342,10 +342,10 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        saveButton = new QPushButton(centralWidget);
+        saveButton->setObjectName(QStringLiteral("saveButton"));
 
-        horizontalLayout->addWidget(pushButton);
+        horizontalLayout->addWidget(saveButton);
 
         loadVideo = new QPushButton(centralWidget);
         loadVideo->setObjectName(QStringLiteral("loadVideo"));
@@ -404,7 +404,7 @@ public:
         label_34->setText(QApplication::translate("PeopleCountQTClass", "Port", Q_NULLPTR));
         ipAddress->setInputMask(QApplication::translate("PeopleCountQTClass", "000.000.000.000;_", Q_NULLPTR));
         label->setText(QString());
-        pushButton->setText(QApplication::translate("PeopleCountQTClass", "Save", Q_NULLPTR));
+        saveButton->setText(QApplication::translate("PeopleCountQTClass", "Save Settings", Q_NULLPTR));
         loadVideo->setText(QApplication::translate("PeopleCountQTClass", "Load Video", Q_NULLPTR));
     } // retranslateUi
 

@@ -18,7 +18,7 @@ public:
 			file >> json;
 		}
 		catch (std::exception e) {
-			QMessageBox(QMessageBox::Warning, "title", e.what());
+			std::cout << e.what() << std::endl;
 		}
 		return json;
 	}

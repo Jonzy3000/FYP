@@ -9,6 +9,7 @@
 #include <Player.h>
 #include "CalibrationOptions.h"
 #include "CalibrationLoader.h"
+#include "CalibrationSaver.h"
 
 class PeopleCountQT : public QMainWindow
 {
@@ -22,6 +23,7 @@ private slots:
 	//Display video frame in player UI
 	void updatePlayerUI(QImage img);
 	void onloadVideoClicked();
+	void onSaveButtonClicked();
 
 private:
 	Ui::PeopleCountQTClass ui;

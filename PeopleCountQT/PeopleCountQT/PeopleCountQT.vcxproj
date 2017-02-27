@@ -130,6 +130,8 @@
     <ClInclude Include="BoundingBoxRegulator.h" />
     <ClInclude Include="BoundingBoxTracker.h" />
     <ClInclude Include="BoundingBoxUtils.h" />
+    <ClInclude Include="JSONWriter.h" />
+    <CustomBuild Include="CalibrationSaver.h" />
     <ClInclude Include="ContourFinder.h" />
     <ClInclude Include="CountingLines.h" />
     <ClInclude Include="CountManager.h" />

@@ -71,6 +71,17 @@ public:
 			}
 		}
 
+		std::string orientationToString() {
+			switch (orientation) {
+			case ORIENTATION::VERTICAL:
+				return "vertical";
+			case ORIENTATION::HORIZONTAL:
+				return "horizontal";
+			}
+
+			return "vertical";
+		}
+
 		ORIENTATION orientation = ORIENTATION::VERTICAL;
 		int outLinePercentageOfScreen = 33;
 		int inLinePerencateOfScreen = 66;

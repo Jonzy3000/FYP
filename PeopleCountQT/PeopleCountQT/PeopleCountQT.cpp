@@ -3,14 +3,19 @@
 PeopleCountQT::PeopleCountQT(QWidget *parent)
 	: QMainWindow(parent)
 {
-	pPlayer = std::make_shared<Player>();
 	ui.setupUi(this);
-	QObject::connect(pPlayer.get(), &Player::processedImage, this, &PeopleCountQT::updatePlayerUI);
-	QObject::connect(ui.loadVideo, &QPushButton::clicked, this, &PeopleCountQT::onloadVideoClicked);
+
+	pPlayer = std::make_shared<Player>();
 	connectCalibrationOptions();
 	connectLoadedCalibrationOptions();
 
 	pCalibrationLoader->load("Calibration\\Calibration.json");
+
+
+	QObject::connect(ui.saveButton, &QPushButton::pressed, this, &PeopleCountQT::onSaveButtonClicked);
+
+	QObject::connect(pPlayer.get(), &Player::processedImage, this, &PeopleCountQT::updatePlayerUI);
+	QObject::connect(ui.loadVideo, &QPushButton::clicked, this, &PeopleCountQT::onloadVideoClicked);
 	pPlayer->setCalibrationOptions(pCalibrationOptions);
 }
 
@@ -18,7 +23,8 @@ void PeopleCountQT::updatePlayerUI(QImage img) {
 	if (!img.isNull())
 	{
 		ui.label->setAlignment(Qt::AlignCenter);
-		ui.label->setPixmap(QPixmap::fromImage(img));
+		ui.label->setPixmap(QPixmap::fromImage(img).scaled(ui.label->size(),
+			Qt::KeepAspectRatio, Qt::FastTransformation));
 	}
 }
 
@@ -35,6 +41,18 @@ void PeopleCountQT::onloadVideoClicked() {
 			msgBox.setText("The selected video could not be opened!");
 			msgBox.exec();
 		}
+	}
+}
+
+void PeopleCountQT::onSaveButtonClicked()
+{
+	CalibrationSaver calibrationSaver(pCalibrationOptions);
+	bool bSuccess = calibrationSaver.saveJson("Calibration/Calibration.json");
+	if (bSuccess) {
+		QMessageBox::information(this, tr("Saved"), tr("Settings saved successfully"));
+	}
+	else {
+		QMessageBox::warning(this, "Error!", "Could not save settings");
 	}
 }
 
