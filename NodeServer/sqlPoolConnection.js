@@ -12,11 +12,11 @@ var Connection = function () {
     this.init = function () {
         this.pool = mysql.createPool({
             multipleStatements: true,
-            connectionLimit: 20,
+            connectionLimit: 100,
             host: 'localhost',
             user: 'root',
             password: 'fyp123',
-            database: 'fyp_db'
+            database: 'fyp_db',
         });
 
         this.createTableIfDoesNotExist();

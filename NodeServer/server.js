@@ -3,7 +3,6 @@ var connect = require('connect');
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var connection = require('./sqlPoolConnection');
-var routes = require('./routes');
 
 app = express();
 
@@ -18,6 +17,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 connection.init();
+
+var routes = require('./routes');
 routes.configure(app, express);
 
 app.use(serveStatic("web")).listen(8080, function () {

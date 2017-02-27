@@ -1,4 +1,5 @@
 var connection = require('./sqlPoolConnection');
+var roomsCache = require('./roomsCache');
 
 function SqlApiQueries() {
     var uuid = function () {
@@ -15,57 +16,70 @@ function SqlApiQueries() {
     var transID = uuid();
 
     var roomsTableName = connection.roomsTableName;
+
+    function onStartup() {
+        /*
+            TODO - create local map that we call on start up and keep rooms there so we know if a room is in a db or not
+        */
+        var updateRoomsCache = function () {
+            getAllCurrentTables(function (err, result) {
+                if (err) {
+                    return;
+                }
+
+                for (var i = 0; i < result.length; i++) {
+                    var room = result[i];
+                    roomsCache.addRoom(room.TABLE_NAME);
+                }
+            });
+        }
+
+        var getAllCurrentTables = function (callback) {
+            connection.acquire(function (err, con) {
+                var query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA= 'fyp_db'";
+                con.query(query, function (err, result) {
+                    con.release();
+                    callback(err, result);
+                })
+            })
+        }
+
+        return {
+            "updateRoomsCache" : updateRoomsCache,
+        }
+    }
+
+    onStartup().updateRoomsCache();
+
     this.newRoom = function (req, res) {
         console.log(req.body);
         var roomName = sanitizeRoomName(req.body.name);
         var maxOccupancy = req.body.maxOccupancy;
         var occupancy = 0;
-        getRowOfRoom(roomName, function (result) {
-            connection.acquire(function (err, con) {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
 
-                updateTransID();
-
-                doesTableExist(roomName, function (exist) {
-                    if (!exist) {
-                        createRoomCounterTable(con, roomName, err);
+        connection.acquire(function (err, con) {
+            if (roomsCache.doesRoomExist(roomName)) {
+                createRoomCounterTable(con, roomName, err);
+                var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?) ";
+                query += "CREATE TABLE `" + roomName + "` (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, timestamp DATETIME, occupancy INT)";
+                con.query(query, [roomName, occupancy, maxOccupancy], function (err, result) {
+                    con.release();
+                    if (err) {
+                        console.log(err);
                     }
 
-                    connection.acquire(function (err, con) {
-                        if (!result.length) {
-                            var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?)";
-                            con.query(query, [roomName, occupancy, maxOccupancy], handleQueryResult.bind(null, con, roomName));
-                        } else {
-                            var id = result[0].id;
-                            var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE ID = ?";
-                            con.query(query, [maxOccupancy, id], handleQueryResult.bind(null, con));
-                        }
-                    });
+                    roomsCache.addRoom(roomName);
                 });
-            });
+            } else {
+                var id = result[0].id;
+                var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE ID = ?";
+                con.query(query, [maxOccupancy, id], handleQueryResult.bind(null, con));
+            }
         });
 
         if (res) {
             res.send();
         }
-    }
-
-    var doesTableExist = function (tableName, callback) {
-        connection.acquire(function (error, con) {
-            if (error) {
-                console.log(error);
-                return;
-            }
-
-            var query = "SELECT 1 FROM `" + tableName + "` LIMIT 1";
-            con.query(query, function (err) {
-                con.release();
-                callback(!err);
-            })
-        })
     }
 
     var jsStringDateToMySQLDate = function (date) {
@@ -79,31 +93,32 @@ function SqlApiQueries() {
         var timestamp = jsStringDateToMySQLDate(date);
 
         //TODO PARSE TIMESTAMP TO VALID;
+        if (roomsCache.doesRoomExist(roomName)) {
+            getRowOfRoom(roomName, function (result) {
+                connection.acquire(function (err, con) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
 
-        getRowOfRoom(roomName, function (result) {
-            connection.acquire(function (err, con) {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+                    if (!result) {
+                        console.log("CANNOT FIND ROOM " + roomName);
+                        con.release();
+                        return;
+                    }
 
-                if (!result) {
-                    console.log("CANNOT FIND ROOM " + roomName);
-                    con.release();
-                    return;
-                }
+                    updateTransID();
+                    if (result.length > 0) {
+                        var occupancy = Number(result[0].occupancy) + Number(incrementBy);
+                        var id = result[0].id;
+                        var query = "UPDATE " + roomsTableName + " SET occupancy = ? WHERE ID = ? ;"
+                        query += " INSERT INTO `" + roomName + "` VALUES(NULL,?,?) "
+                        con.query(query, [occupancy, id, timestamp, occupancy], handleQueryResult.bind(null, con));
+                    }
 
-                updateTransID();
-                if (result.length > 0) {
-                    var occupancy = Number(result[0].occupancy) + Number(incrementBy);
-                    var id = result[0].id;
-                    var query = "UPDATE " + roomsTableName + " SET occupancy = ? WHERE ID = ? ;"
-                    query += " INSERT INTO `" + roomName + "` VALUES(NULL,?,?) "
-                    con.query(query, [occupancy, id, timestamp, occupancy], handleQueryResult.bind(null, con));
-                }
-
+                });
             });
-        });
+        }
 
         if (res) {
             res.send();
@@ -153,9 +168,12 @@ function SqlApiQueries() {
 
             var roomName = sanitizeRoomName(req.query.name);
             var query = "SELECT * FROM `" + roomName + "`";
+            console.time("test");
             con.query(query, function (err, result) {
+                console.timeEnd("test");
                 con.release();
                 res.send({ id: transID, result: result });
+                
             })
 
         });
@@ -191,18 +209,6 @@ function SqlApiQueries() {
         return room.toLowerCase().trim();
     }
 
-    var createRoomCounterTable = function (con, roomName, err) {
-        if (err) {
-            console.error(err.stack);
-            con.release();
-            return;
-        }
-
-        var query = "CREATE TABLE `" + roomName + "` (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, timestamp DATETIME, occupancy INT)";
-
-        con.query(query, handleQueryResult.bind(null, con));
-    }
-
     //HELPERS
     var getIdOfRoom = function (room, callback) {
         room = room.toLowerCase().trim();
@@ -215,22 +221,6 @@ function SqlApiQueries() {
 
             }
             con.query(query, function (err, result) {
-                con.release();
-                callback(result);
-            })
-        })
-    }
-
-    var getRowOfRoom = function (room, callback) {
-        room = room.toLowerCase().trim();
-        var query = "SELECT * FROM " + roomsTableName + " WHERE name = ?";
-        connection.acquire(function (err, con) {
-            if (err) {
-                con.release();
-                console.log(err);
-                callback();
-            }
-            con.query(query, [room], function (err, result) {
                 con.release();
                 callback(result);
             })
