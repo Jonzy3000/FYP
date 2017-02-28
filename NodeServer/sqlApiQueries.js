@@ -10,7 +10,7 @@ function SqlApiQueries() {
     }
 
     var updateTransID = function () {
-        transID = uuid;
+        transID = uuid();
     }
 
     var transID = uuid();
@@ -45,7 +45,7 @@ function SqlApiQueries() {
         }
 
         return {
-            "updateRoomsCache" : updateRoomsCache,
+            "updateRoomsCache": updateRoomsCache,
         }
     }
 
@@ -58,9 +58,8 @@ function SqlApiQueries() {
         var occupancy = 0;
 
         connection.acquire(function (err, con) {
-            if (roomsCache.doesRoomExist(roomName)) {
-                createRoomCounterTable(con, roomName, err);
-                var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?) ";
+            if (!roomsCache.doesRoomExist(roomName)) {
+                var query = "INSERT INTO " + roomsTableName + " VALUES(NULL,?,?,?) ;";
                 query += "CREATE TABLE `" + roomName + "` (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, timestamp DATETIME, occupancy INT)";
                 con.query(query, [roomName, occupancy, maxOccupancy], function (err, result) {
                     con.release();
@@ -71,9 +70,8 @@ function SqlApiQueries() {
                     roomsCache.addRoom(roomName);
                 });
             } else {
-                var id = result[0].id;
-                var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE ID = ?";
-                con.query(query, [maxOccupancy, id], handleQueryResult.bind(null, con));
+                var query = "UPDATE " + roomsTableName + " SET maxOccupancy = ? WHERE name = ?";
+                con.query(query, [maxOccupancy, roomName], handleQueryResult.bind(null, con));
             }
         });
 
@@ -173,7 +171,7 @@ function SqlApiQueries() {
                 console.timeEnd("test");
                 con.release();
                 res.send({ id: transID, result: result });
-                
+
             })
 
         });
@@ -227,6 +225,23 @@ function SqlApiQueries() {
         })
     }
 
+
+    var getRowOfRoom = function (room, callback) {
+        room = room.toLowerCase().trim();
+        var query = "SELECT * FROM " + roomsTableName + " WHERE name = ?";
+        connection.acquire(function (err, con) {
+            if (err) {
+                con.release();
+                console.log(err);
+                callback();
+            }
+            con.query(query, [room], function (err, result) {
+                con.release();
+                callback(result);
+            })
+        })
+    }
+
     var handleQueryResult = function (con, err, result) {
         con.release();
         if (err) {
@@ -243,8 +258,7 @@ function SqlApiQueries() {
     }
 
     this.generateRandomData = function (test, res) {
-        var roomName = "4E 1.2";
-        var _this = this;
+        var roomName = "EB 1.3";
         var req = {
             "body": {
                 "maxOccupancy": 160,
@@ -252,7 +266,14 @@ function SqlApiQueries() {
             }
         }
 
-        _this.newRoom(req);
+        this.newRoom(req, res);
+        var retry = 0;
+
+        while (!roomsCache.doesRoomExist(sanitizeRoomName(roomName)) && retry < 1000000)
+        {
+            retry++;
+        }
+
         for (var i = 0; i < 10000; i++) {
             var date = randomDate(new Date("2016"), new Date());
             var req = {
@@ -264,7 +285,7 @@ function SqlApiQueries() {
             }
 
             try {
-                _this.updateCounter(req, res);
+                this.updateCounter(req, res);
             } catch (err) {
                 console.log(err);
             }

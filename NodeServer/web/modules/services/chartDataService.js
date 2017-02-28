@@ -15,7 +15,7 @@
             var step = Math.round(rawDisplayedData.length / numberOfDataPoints);
             var smoothedData = [];
             for (var i = 0, length = rawDisplayedData.length; i < length; i++) {
-                if (i % step == 0) {
+                if (i % step == 0 || i == length -1) {
                     smoothedData.push(rawDisplayedData[i]);
                 }
             }
