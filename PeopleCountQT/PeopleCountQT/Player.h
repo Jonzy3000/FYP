@@ -37,6 +37,9 @@ public:
 	//check if the player has been stopped
 	bool isStopped() const;
 
+	void pause();
+	void unpause();
+
 	void setCalibrationOptions(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions_);
 	void onImageNameChange(QString imageName);
 
@@ -52,4 +55,5 @@ private:
 	bool loadVideo();
 	std::shared_ptr<BackgroundSubtractionProcessor> pBackgroundSubtractionProcessor;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
+	bool bPaused = false;
 };

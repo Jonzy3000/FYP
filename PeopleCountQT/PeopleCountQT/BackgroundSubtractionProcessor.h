@@ -15,11 +15,15 @@ public:
 		pMOG2 = cv::createBackgroundSubtractorMOG2();
 	}
 
-	cv::Mat process(cv::Mat & frame) {
-		pMOG2->apply(frame, frameMOG2);
+	cv::Mat process(cv::Mat & frame, bool isPaused) {
+		cv::Mat frameToProcess = frame.clone();
+
+		if (!isPaused) {
+			pMOG2->apply(frameToProcess, frameMOG2);
+		}
 
 		CountingLines countingLines(pCalibrationOptions->getCountingLinesConfig());
-		auto lines = countingLines.getCountingLines(frame.size());
+		auto lines = countingLines.getCountingLines(frameToProcess.size());
 		auto inLine = lines.first;
 		auto outLine = lines.second;
 		boundingBoxTracker.setCountingLines(countingLines);
@@ -41,25 +45,25 @@ public:
 		BoundingBoxRegulator boundBoxRegulator(pCalibrationOptions->getPeopleThresholdSize().get());
 		auto regulatedBoxes = boundBoxRegulator.regulateBoxes(boxes, convexHulls);
 
-		contourFinder.drawBoundingRects(regulatedBoxes, frame);
-		contourFinder.drawContours(frame);
-		contourFinder.drawConvexHulls(frame, convexHulls);
+		contourFinder.drawBoundingRects(regulatedBoxes, frameToProcess);
+		contourFinder.drawContours(frameToProcess);
+		contourFinder.drawConvexHulls(frameToProcess, convexHulls);
 
 		frameNumber++;
-		boundingBoxTracker.trackBoxes(regulatedBoxes, frameNumber, frame);
-		boundingBoxTracker.drawIDs(frame);
-		boundingBoxTracker.drawText(frame);
+		boundingBoxTracker.trackBoxes(regulatedBoxes, frameNumber, frameToProcess);
+		boundingBoxTracker.drawIDs(frameToProcess);
+		boundingBoxTracker.drawText(frameToProcess);
 
-		cv::line(frame, inLine.first, inLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
-		cv::putText(frame, "In Line", inLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
+		cv::line(frameToProcess, inLine.first, inLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+		cv::putText(frameToProcess, "In Line", inLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 
-		cv::line(frame, outLine.first, outLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
-		cv::putText(frame, "Out Line", outLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
+		cv::line(frameToProcess, outLine.first, outLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
+		cv::putText(frameToProcess, "Out Line", outLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 
-		cv::putText(frame, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
+		cv::putText(frameToProcess, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
 
 
-		return getImageToShow(frame);
+		return getImageToShow(frameToProcess);
 	}
 
 	const cv::Mat getImageToShow(const cv::Mat & frame) {

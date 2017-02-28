@@ -55,16 +55,19 @@ void Player::run()
 	while (!stop) {
 		int delay = (1000 / frameRate);
 
-		if (!capture.read(frame) || frame.empty())
-		{
-			Stop();
-			return;
+		if (!bPaused) {
+			if (!capture.read(frame) || frame.empty())
+			{
+				Stop();
+				return;
+			}
 		}
 
 		auto now = Clock::now();
 
 		//perform algorithm
-		frame = pBackgroundSubtractionProcessor->process(frame);
+		//need to create an pausedFrame to use when we're paused so we don't corrupt the original frame
+		frame = pBackgroundSubtractionProcessor->process(frame, bPaused);
 
 		delay -= std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - now).count();
 
@@ -104,6 +107,15 @@ void Player::msleep(int ms) {
 
 bool Player::isStopped() const {
 	return this->stop;
+}
+
+void Player::pause()
+{
+	bPaused = true;
+}
+
+void Player::unpause() {
+	bPaused = false;
 }
 
 void Player::setCalibrationOptions(const std::shared_ptr<CalibrationOptions>& pCalibrationOptions_) {

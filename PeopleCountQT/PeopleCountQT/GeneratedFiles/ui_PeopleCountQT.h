@@ -88,13 +88,14 @@ public:
     QHBoxLayout *horizontalLayout;
     QPushButton *saveButton;
     QPushButton *loadVideo;
+    QPushButton *playPauseButton;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *PeopleCountQTClass)
     {
         if (PeopleCountQTClass->objectName().isEmpty())
             PeopleCountQTClass->setObjectName(QStringLiteral("PeopleCountQTClass"));
-        PeopleCountQTClass->resize(1154, 630);
+        PeopleCountQTClass->resize(1154, 686);
         PeopleCountQTClass->setToolButtonStyle(Qt::ToolButtonTextOnly);
         PeopleCountQTClass->setTabShape(QTabWidget::Rounded);
         centralWidget = new QWidget(PeopleCountQTClass);
@@ -393,6 +394,11 @@ public:
 
         gridLayout_2->addLayout(horizontalLayout, 5, 1, 2, 1);
 
+        playPauseButton = new QPushButton(centralWidget);
+        playPauseButton->setObjectName(QStringLiteral("playPauseButton"));
+
+        gridLayout_2->addWidget(playPauseButton, 6, 0, 1, 1);
+
         PeopleCountQTClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PeopleCountQTClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -457,6 +463,7 @@ public:
         label->setText(QString());
         saveButton->setText(QApplication::translate("PeopleCountQTClass", "Save Settings", Q_NULLPTR));
         loadVideo->setText(QApplication::translate("PeopleCountQTClass", "Load Video", Q_NULLPTR));
+        playPauseButton->setText(QApplication::translate("PeopleCountQTClass", "Pause", Q_NULLPTR));
     } // retranslateUi
 
 };

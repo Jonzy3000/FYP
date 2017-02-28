@@ -26,6 +26,7 @@ private slots:
 	void onSaveButtonClicked();
 	void onLiveCameraFeedPressed(bool bChecked);
 	void onCaptureChange(int captureNumber);
+	void onPlayPauseButtonClicked();
 
 private:
 	Ui::PeopleCountQTClass ui;

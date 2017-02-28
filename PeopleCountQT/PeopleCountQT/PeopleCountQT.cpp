@@ -16,6 +16,7 @@ PeopleCountQT::PeopleCountQT(QWidget *parent)
 	QObject::connect(ui.liveCameraFeedCheckBox, &QCheckBox::clicked, this, &PeopleCountQT::onLiveCameraFeedPressed);
 	QObject::connect(pPlayer.get(), &Player::processedImage, this, &PeopleCountQT::updatePlayerUI);
 	QObject::connect(ui.loadVideo, &QPushButton::clicked, this, &PeopleCountQT::onloadVideoClicked);
+	QObject::connect(ui.playPauseButton, &QPushButton::clicked, this, &PeopleCountQT::onPlayPauseButtonClicked);
 	pPlayer->setCalibrationOptions(pCalibrationOptions);
 }
 
@@ -67,6 +68,22 @@ void PeopleCountQT::onCaptureChange(int captureNumber)
 		QMessageBox::warning(this, tr("Error"), QString::fromStdString("Could not find camera: " + std::to_string(captureNumber)));
 		pPlayer->Stop();
 		ui.label->clear();
+	}
+}
+
+void PeopleCountQT::onPlayPauseButtonClicked()
+{
+	const QString pause = "Pause";
+	const QString play = "Play";
+
+	QString text = ui.playPauseButton->text();
+	if (text == pause) {
+		ui.playPauseButton->setText(play);
+		pPlayer->pause();
+	}
+	else if (text == play) {
+		ui.playPauseButton->setText(pause);
+		pPlayer->unpause();
 	}
 }
 
