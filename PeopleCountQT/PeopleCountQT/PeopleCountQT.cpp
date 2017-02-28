@@ -29,6 +29,9 @@ void PeopleCountQT::updatePlayerUI(QImage img) {
 }
 
 void PeopleCountQT::onloadVideoClicked() {
+	if (ui.liveCameraFeedCheckBox->isChecked()) {
+		ui.liveCameraFeedCheckBox->animateClick();
+	}
 
 	QString filename = QFileDialog::getOpenFileName(this,
 		tr("Open Video"), ".",
@@ -45,17 +48,17 @@ void PeopleCountQT::onloadVideoClicked() {
 }
 
 void PeopleCountQT::onLiveCameraFeedPressed(bool bChecked) {
-		ui.cameraFeedLabel->setEnabled(bChecked);
-		ui.captureNumber->setEnabled(bChecked);
+	ui.cameraFeedLabel->setEnabled(bChecked);
+	ui.captureNumber->setEnabled(bChecked);
 
-		if (bChecked) {
-			onCaptureChange(ui.captureNumber->currentIndex());
-		}
-		else {
-			pPlayer->Stop();
-			ui.label->clear();
-		}
-		
+	if (bChecked) {
+		onCaptureChange(ui.captureNumber->currentIndex());
+	}
+	else {
+		pPlayer->Stop();
+		ui.label->clear();
+	}
+
 }
 
 void PeopleCountQT::onCaptureChange(int captureNumber)
