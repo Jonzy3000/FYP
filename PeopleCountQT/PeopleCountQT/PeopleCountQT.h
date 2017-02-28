@@ -24,6 +24,8 @@ private slots:
 	void updatePlayerUI(QImage img);
 	void onloadVideoClicked();
 	void onSaveButtonClicked();
+	void onLiveCameraFeedPressed(bool bChecked);
+	void onCaptureChange(int captureNumber);
 
 private:
 	Ui::PeopleCountQTClass ui;

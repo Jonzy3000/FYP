@@ -170,15 +170,16 @@ public:
 			return;
 		}
 
-		auto maxAreaItr = peopleThreshold.find("max area");
-		if (maxAreaItr == peopleThreshold.end()) {
-			return;
-		}
+		int maxArea = 0;
+		//auto maxAreaItr = peopleThreshold.find("max area");
+		//if (maxAreaItr == peopleThreshold.end()) {
+		//	return;
+		//}
 
-		auto maxArea = *maxAreaItr;
-		if (!maxArea.is_number_integer()) {
-			return;
-		}
+		//auto maxArea = *maxAreaItr;
+		//if (!maxArea.is_number_integer()) {
+		//	return;
+		//}
 
 		auto maxWidthItr = peopleThreshold.find("max width");
 		if (maxWidthItr == peopleThreshold.end()) {

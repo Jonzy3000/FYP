@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QGridLayout>
@@ -41,6 +42,12 @@ public:
     QVBoxLayout *verticalLayout_3;
     QGroupBox *groupBox_13;
     QVBoxLayout *verticalLayout_4;
+    QGroupBox *groupBox;
+    QFormLayout *formLayout_7;
+    QLabel *cameraFeedLabel;
+    QComboBox *captureNumber;
+    QLabel *label_4;
+    QCheckBox *liveCameraFeedCheckBox;
     QGroupBox *groupBox_19;
     QFormLayout *formLayout_6;
     QLabel *label_2;
@@ -115,7 +122,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents_3 = new QWidget();
         scrollAreaWidgetContents_3->setObjectName(QStringLiteral("scrollAreaWidgetContents_3"));
-        scrollAreaWidgetContents_3->setGeometry(QRect(0, 0, 281, 621));
+        scrollAreaWidgetContents_3->setGeometry(QRect(0, 0, 281, 705));
         verticalLayout_3 = new QVBoxLayout(scrollAreaWidgetContents_3);
         verticalLayout_3->setSpacing(6);
         verticalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -126,6 +133,37 @@ public:
         verticalLayout_4->setSpacing(6);
         verticalLayout_4->setContentsMargins(11, 11, 11, 11);
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        groupBox = new QGroupBox(groupBox_13);
+        groupBox->setObjectName(QStringLiteral("groupBox"));
+        formLayout_7 = new QFormLayout(groupBox);
+        formLayout_7->setSpacing(6);
+        formLayout_7->setContentsMargins(11, 11, 11, 11);
+        formLayout_7->setObjectName(QStringLiteral("formLayout_7"));
+        cameraFeedLabel = new QLabel(groupBox);
+        cameraFeedLabel->setObjectName(QStringLiteral("cameraFeedLabel"));
+        cameraFeedLabel->setEnabled(false);
+
+        formLayout_7->setWidget(2, QFormLayout::LabelRole, cameraFeedLabel);
+
+        captureNumber = new QComboBox(groupBox);
+        captureNumber->setObjectName(QStringLiteral("captureNumber"));
+        captureNumber->setEnabled(false);
+
+        formLayout_7->setWidget(2, QFormLayout::FieldRole, captureNumber);
+
+        label_4 = new QLabel(groupBox);
+        label_4->setObjectName(QStringLiteral("label_4"));
+
+        formLayout_7->setWidget(1, QFormLayout::LabelRole, label_4);
+
+        liveCameraFeedCheckBox = new QCheckBox(groupBox);
+        liveCameraFeedCheckBox->setObjectName(QStringLiteral("liveCameraFeedCheckBox"));
+
+        formLayout_7->setWidget(1, QFormLayout::FieldRole, liveCameraFeedCheckBox);
+
+
+        verticalLayout_4->addWidget(groupBox);
+
         groupBox_19 = new QGroupBox(groupBox_13);
         groupBox_19->setObjectName(QStringLiteral("groupBox_19"));
         formLayout_6 = new QFormLayout(groupBox_19);
@@ -370,6 +408,19 @@ public:
     {
         PeopleCountQTClass->setWindowTitle(QApplication::translate("PeopleCountQTClass", "PeopleCountQT", Q_NULLPTR));
         groupBox_13->setTitle(QApplication::translate("PeopleCountQTClass", "Calibration", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("PeopleCountQTClass", "Live", Q_NULLPTR));
+        cameraFeedLabel->setText(QApplication::translate("PeopleCountQTClass", "Camera Feed Slot", Q_NULLPTR));
+        captureNumber->clear();
+        captureNumber->insertItems(0, QStringList()
+         << QApplication::translate("PeopleCountQTClass", "0", Q_NULLPTR)
+         << QApplication::translate("PeopleCountQTClass", "1", Q_NULLPTR)
+         << QApplication::translate("PeopleCountQTClass", "2", Q_NULLPTR)
+         << QApplication::translate("PeopleCountQTClass", "3", Q_NULLPTR)
+         << QApplication::translate("PeopleCountQTClass", "4", Q_NULLPTR)
+         << QApplication::translate("PeopleCountQTClass", "5", Q_NULLPTR)
+        );
+        label_4->setText(QApplication::translate("PeopleCountQTClass", "Use Live Camera Feed", Q_NULLPTR));
+        liveCameraFeedCheckBox->setText(QString());
         groupBox_19->setTitle(QApplication::translate("PeopleCountQTClass", "Show Image", Q_NULLPTR));
         label_2->setText(QApplication::translate("PeopleCountQTClass", "Image Name", Q_NULLPTR));
         imageName->clear();

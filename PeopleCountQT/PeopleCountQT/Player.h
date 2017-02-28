@@ -27,6 +27,9 @@ public:
 	~Player();
 	//Load a video from memory
 	bool loadVideo(std::string filename);
+
+	bool loadVideo(int capture);
+
 	//Play the video
 	void Play();
 	//Stop the video
@@ -46,6 +49,7 @@ private:
 	VideoCapture capture;
 	Mat RGBframe;
 	QImage img;
+	bool loadVideo();
 	std::shared_ptr<BackgroundSubtractionProcessor> pBackgroundSubtractionProcessor;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 };

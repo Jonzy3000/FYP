@@ -16,18 +16,29 @@ Player::Player(QObject *parent)
 }
 
 bool Player::loadVideo(std::string filename) {
-	pBackgroundSubtractionProcessor = std::make_shared<BackgroundSubtractionProcessor>(pCalibrationOptions);
-
 	capture.open(filename);
-	if (capture.isOpened())
-	{
+	return loadVideo();
+}
+
+bool Player::loadVideo(int captureNumber)
+{
+	capture.open(captureNumber);
+	return loadVideo();
+}
+
+bool Player::loadVideo()
+{
+	pBackgroundSubtractionProcessor = std::make_shared<BackgroundSubtractionProcessor>(pCalibrationOptions);
+	if (capture.isOpened()) {
 		frameRate = (int)capture.get(CV_CAP_PROP_FPS);
+		frameRate = frameRate == 0 ? 200 : frameRate;
 		Play();
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
+
 
 void Player::Play()
 {
@@ -46,7 +57,7 @@ void Player::run()
 
 		if (!capture.read(frame) || frame.empty())
 		{
-			stop = true;
+			Stop();
 			return;
 		}
 
@@ -85,6 +96,7 @@ Player::~Player()
 void Player::Stop()
 {
 	stop = true;
+
 }
 void Player::msleep(int ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));

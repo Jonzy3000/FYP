@@ -11,16 +11,16 @@ PeopleCountQT::PeopleCountQT(QWidget *parent)
 
 	pCalibrationLoader->load("Calibration\\Calibration.json");
 
-
+	QObject::connect(ui.captureNumber, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PeopleCountQT::onCaptureChange);
 	QObject::connect(ui.saveButton, &QPushButton::pressed, this, &PeopleCountQT::onSaveButtonClicked);
-
+	QObject::connect(ui.liveCameraFeedCheckBox, &QCheckBox::clicked, this, &PeopleCountQT::onLiveCameraFeedPressed);
 	QObject::connect(pPlayer.get(), &Player::processedImage, this, &PeopleCountQT::updatePlayerUI);
 	QObject::connect(ui.loadVideo, &QPushButton::clicked, this, &PeopleCountQT::onloadVideoClicked);
 	pPlayer->setCalibrationOptions(pCalibrationOptions);
 }
 
 void PeopleCountQT::updatePlayerUI(QImage img) {
-	if (!img.isNull())
+	if (!img.isNull() && !pPlayer->isStopped())
 	{
 		ui.label->setAlignment(Qt::AlignCenter);
 		ui.label->setPixmap(QPixmap::fromImage(img).scaled(ui.label->size(),
@@ -41,6 +41,29 @@ void PeopleCountQT::onloadVideoClicked() {
 			msgBox.setText("The selected video could not be opened!");
 			msgBox.exec();
 		}
+	}
+}
+
+void PeopleCountQT::onLiveCameraFeedPressed(bool bChecked) {
+		ui.cameraFeedLabel->setEnabled(bChecked);
+		ui.captureNumber->setEnabled(bChecked);
+
+		if (bChecked) {
+			onCaptureChange(ui.captureNumber->currentIndex());
+		}
+		else {
+			pPlayer->Stop();
+			ui.label->clear();
+		}
+		
+}
+
+void PeopleCountQT::onCaptureChange(int captureNumber)
+{
+	if (!pPlayer->loadVideo(captureNumber)) {
+		QMessageBox::warning(this, tr("Error"), QString::fromStdString("Could not find camera: " + std::to_string(captureNumber)));
+		pPlayer->Stop();
+		ui.label->clear();
 	}
 }
 
