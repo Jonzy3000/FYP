@@ -2,6 +2,9 @@
 #include "CalibrationOptions.h"
 #include "JSONWriter.h"
 
+/*
+TODO: TIDY UP THE STRINGS NAMES OF SETTINGS AND PUT IN A CONST FILE SOMEHWERE
+*/
 class CalibrationSaver {
 public:
 	CalibrationSaver( const std::shared_ptr<CalibrationOptions> & pCalibrationOptions) :
@@ -16,6 +19,7 @@ public:
 		json = getCountingLinesJSON(json);
 		json = getPeopleThreshold(json);
 		json = getBlobExtractionConfigJSON(json);
+		json = getServerSettings(json);
 
 		try {
 			JSONWriter::saveJson(fileName, json);
@@ -48,9 +52,9 @@ private:
 	JSONLib getCountingLinesJSON(JSONLib& json) {
 		const auto countingLinesConfig = pCalibrationOptions->getCountingLinesConfig();
 		
-		json["count lines"]["oreientation (horizontal or vertical)"] = countingLinesConfig->orientationToString();
-		json["count lines"]["inline"]["percentage of screen"] = countingLinesConfig->inLinePerencateOfScreen;
-		json["count lines"]["outline"]["percentage of screen"] = countingLinesConfig->outLinePercentageOfScreen;
+		json["count lines"]["orientation (horizontal or vertical)"] = countingLinesConfig->orientationToString();
+		json["count lines"]["in line"]["percentage of screen"] = countingLinesConfig->inLinePerencateOfScreen;
+		json["count lines"]["out line"]["percentage of screen"] = countingLinesConfig->outLinePercentageOfScreen;
 
 		return json;
 	}
@@ -61,6 +65,15 @@ private:
 		json["people threshold size"]["max width"] = peopleThresholdConfig->maxWidth;
 		json["people threshold size"]["max height"] = peopleThresholdConfig->maxHeight;
 
+		return json;
+	}
+
+	JSONLib getServerSettings(JSONLib& json) {
+		const auto serverSettings = pCalibrationOptions->getServerConfig();
+
+		json["server settings"]["ip address"] = serverSettings->ipAddress;
+		json["server settings"]["port"] = serverSettings->portNumber;
+		
 		return json;
 	}
 

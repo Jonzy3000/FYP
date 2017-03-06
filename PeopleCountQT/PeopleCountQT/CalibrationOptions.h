@@ -106,6 +106,18 @@ public:
 		int maxHeight;
 	};
 
+	struct ServerConfig {
+		ServerConfig(std::string ip_, int portNumber_) :
+			ipAddress(ip_),
+			portNumber(portNumber_)
+		{
+
+		}
+		ServerConfig() {}
+		std::string ipAddress;
+		int portNumber;
+	};
+
 	const std::shared_ptr<ContourConfig> getContourConfig() {
 		return pContourConfig;
 	}
@@ -120,6 +132,10 @@ public:
 
 	const std::shared_ptr<CountingLinesConfig> getCountingLinesConfig() {
 		return pCountingLinesConfig;
+	}
+
+	const std::shared_ptr<ServerConfig> getServerConfig() {
+		return pServerConfig;
 	}
 
 public slots:
@@ -139,11 +155,16 @@ public slots:
 		pCountingLinesConfig = std::make_shared<CountingLinesConfig>(strOrientation, outLinePercentageOfScreen_, inLinePerencateOfScreen_);
 	}
 
+	void setupServerConfig(std::string ipAddress, int portNumber) {
+		pServerConfig = std::make_shared <ServerConfig>(ipAddress, portNumber);
+	}
+
 private:
 	std::shared_ptr<ContourConfig> pContourConfig = std::make_shared<ContourConfig>();
 	std::shared_ptr<BlobExtractionConfig> pBlobExtractionConfig = std::make_shared<BlobExtractionConfig>();
 	std::shared_ptr<PeopleThresholdSize> pPopleThresholdSize = std::make_shared<PeopleThresholdSize>();
 	std::shared_ptr<CountingLinesConfig>  pCountingLinesConfig = std::make_shared<CountingLinesConfig>();
+	std::shared_ptr<ServerConfig> pServerConfig = std::make_shared<ServerConfig>();
 
 };
 

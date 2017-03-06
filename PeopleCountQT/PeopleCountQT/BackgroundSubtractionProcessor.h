@@ -13,6 +13,7 @@ public:
 		pCalibrationOptions(pCalibrationOptions_)
 	{
 		pMOG2 = cv::createBackgroundSubtractorMOG2();
+		pBoundingBoxTracker = std::make_shared<BoundingBoxTracker>(pCalibrationOptions);
 	}
 
 	cv::Mat process(cv::Mat & frame, bool isPaused) {
@@ -26,7 +27,7 @@ public:
 		auto lines = countingLines.getCountingLines(frameToProcess.size());
 		auto inLine = lines.first;
 		auto outLine = lines.second;
-		boundingBoxTracker.setCountingLines(countingLines);
+		pBoundingBoxTracker->setCountingLines(countingLines);
 
 		auto minArea = pCalibrationOptions->getContourConfig()->minArea;
 		auto morphOpenKernel = pCalibrationOptions->getBlobExtractionConfg()->morphOpenKernelSize;
@@ -50,9 +51,9 @@ public:
 		contourFinder.drawConvexHulls(frameToProcess, convexHulls);
 
 		frameNumber++;
-		boundingBoxTracker.trackBoxes(regulatedBoxes, frameNumber, frameToProcess);
-		boundingBoxTracker.drawIDs(frameToProcess);
-		boundingBoxTracker.drawText(frameToProcess);
+		pBoundingBoxTracker->trackBoxes(regulatedBoxes, frameNumber, frameToProcess);
+		pBoundingBoxTracker->drawIDs(frameToProcess);
+		pBoundingBoxTracker->drawText(frameToProcess);
 
 		cv::line(frameToProcess, inLine.first, inLine.second, cv::Scalar(35.0, 255.0, 35.0), 2);
 		cv::putText(frameToProcess, "In Line", inLine.first, cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
@@ -96,7 +97,8 @@ private:
 	const std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 	FPSCounter fpsCounter = FPSCounter();
 
-	BoundingBoxTracker boundingBoxTracker = BoundingBoxTracker();
+	std::shared_ptr<BoundingBoxTracker> pBoundingBoxTracker;
+
 	int frameNumber = 0;
 
 	std::string imageToShow;

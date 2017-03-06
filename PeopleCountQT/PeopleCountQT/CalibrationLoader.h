@@ -19,6 +19,7 @@ public:
 		setupCountingLines(json);
 		setupBlobExtractionConfg(json);
 		setupPeopleThreshold(json);
+		setupServerConfig(json);
 	}
 
 	void setupContourConifg(const JSONLib& json) {
@@ -101,7 +102,7 @@ public:
 			return;
 		}
 
-		auto orientationItr = countLines.find("oreientation (horizontal or vertical)");
+		auto orientationItr = countLines.find("orientation (horizontal or vertical)");
 		if (orientationItr == countLines.end()) {
 			return;
 		}
@@ -156,7 +157,7 @@ public:
 
 
 		emit countingLinesUpdate(orientation, (int)outLinePercentage, (int)inLinePercentage);
-		
+
 	}
 
 	void setupPeopleThreshold(const JSONLib& json) {
@@ -204,11 +205,45 @@ public:
 		emit peopleThresholdSizeUpdate(maxArea, maxWidth, maxHeight);
 	}
 
+	void setupServerConfig(const JSONLib& json) {
+		auto serverSettingsItr = json.find("server settings");
+		if (serverSettingsItr == json.end()) {
+			return;
+		}
+
+		auto serverSettings = *serverSettingsItr;
+		if (!serverSettings.is_object()) {
+			return;
+		}
+
+		auto ipAddressItr = serverSettings.find("ip address");
+		if (ipAddressItr == serverSettings.end()) {
+			return;
+		}
+
+		auto ipAddress = *ipAddressItr;
+		if (!ipAddress.is_string()) {
+			return;
+		}
+
+		auto portNumberItr = serverSettings.find("port");
+		if (portNumberItr == serverSettings.end()) {
+			return;
+		}
+		
+		auto portNumber = *portNumberItr;
+		if (!portNumber.is_number_integer()) {
+			return;
+		}
+
+		emit serverSettingsUpdate(ipAddress, (int) portNumber);
+	}
+
 signals:
 	void contourUpdate(int value);
 	void blobExtractionUpdate(int thresholdValue, int openKernelSize, int closeKernelSize);
 	void countingLinesUpdate(std::string orientation, int outlinePercentage, int inLinePercentage);
 	void peopleThresholdSizeUpdate(int maxArea, int maxWidth, int maxHeight);
-	void serverSettingsUpdate(std::string, int);
+	void serverSettingsUpdate(std::string ip, int port);
 
 };

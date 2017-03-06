@@ -12,6 +12,12 @@ typedef CountingLines::TOUCHING_LINE TOUCHING_LINE;
 
 class BoundingBoxTracker {
 public:
+	BoundingBoxTracker(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions_) :
+		pCalibrationOptions(pCalibrationOptions_)
+	{
+		pCountManager = std::make_shared<CountManager>(pCalibrationOptions);
+	}
+
 	struct TrackedBox {
 		TrackedBox(const cv::Rect & startPoint_, int frameNumber_, TOUCHING_LINE direction_, const std::shared_ptr<HSIVector> pHSIVector_) :
 			startRect(startPoint_),
@@ -30,10 +36,6 @@ public:
 		std::shared_ptr<HSIVector> pHSIVector;
 	};
 
-	BoundingBoxTracker() {
-
-	}
-
 	void trackBoxes(std::vector<cv::Rect> baxoesToTrack, int frameNumber, const cv::Mat & frame_) {
 		this->frame = frame_;
 
@@ -49,8 +51,8 @@ public:
 	}
 
 	void drawText(cv::Mat& frame) {
-		std::string IN = " IN: " + std::to_string(countManger.getCountIn());
-		std::string OUT = "OUT: " + std::to_string(countManger.getCountOut());
+		std::string IN = " IN: " + std::to_string(pCountManager->getCountIn());
+		std::string OUT = "OUT: " + std::to_string(pCountManager->getCountOut());
 		cv::putText(frame, IN, cv::Point(frame.cols - 100, 25), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 		cv::putText(frame, OUT, cv::Point(frame.cols - 100, 55), cv::HersheyFonts::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(25, 25, 255));
 	}
@@ -68,11 +70,12 @@ public:
 	}
 
 private:
-	CountManager countManger = CountManager();
+	std::shared_ptr<CountManager> pCountManager;
 	std::map<int, TrackedBox> boxes;
 	std::shared_ptr<CountingLines> pCountingLines;
 	int idOfBox = 0;
 	cv::Mat frame;
+	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 
 	void trackBox(cv::Rect box, int frameNumber) {
 		bool newBox = true;
@@ -188,10 +191,10 @@ private:
 
 	void updateCounter(TOUCHING_LINE initialLine) {
 		if (initialLine == TOUCHING_LINE::OUTLINE) {
-			countManger.incrementCountIn();
+			pCountManager->incrementCountIn();
 		}
 		else if (initialLine == TOUCHING_LINE::INLINE) {
-			countManger.incrementCountOut();
+			pCountManager->incrementCountOut();
 		}
 	}
 

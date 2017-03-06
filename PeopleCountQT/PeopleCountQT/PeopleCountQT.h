@@ -35,4 +35,5 @@ private:
 	std::shared_ptr<CalibrationLoader> pCalibrationLoader = std::make_shared<CalibrationLoader>();
 	void connectCalibrationOptions();
 	void connectLoadedCalibrationOptions();
+	void ipAddressValidator();
 };

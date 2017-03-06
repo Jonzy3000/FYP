@@ -4,6 +4,7 @@ PeopleCountQT::PeopleCountQT(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	ipAddressValidator();
 
 	pPlayer = std::make_shared<Player>();
 	connectCalibrationOptions();
@@ -133,6 +134,19 @@ void PeopleCountQT::connectLoadedCalibrationOptions() {
 
 		this->pCalibrationOptions->setupPeopleThresholdSize(maxArea, maxWidth, maxHeight);
 	});
+
+	QObject::connect(pCalibrationLoader.get(), &CalibrationLoader::serverSettingsUpdate, this, [this](std::string ipAddress, int port) {
+		this->ui.ipAddress->setText(QString::fromStdString(ipAddress));
+		this->ui.portNumber->setValue(port);
+	});
+}
+
+void PeopleCountQT::ipAddressValidator()
+{
+	QRegExp ip("(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+	QRegExpValidator ipValidator(ip, 0);
+	ui.ipAddress->setValidator(&ipValidator);
+
 }
 
 void PeopleCountQT::connectCalibrationOptions() {
@@ -171,6 +185,14 @@ void PeopleCountQT::connectCalibrationOptions() {
 
 	QObject::connect(ui.maxHeight, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
 		this->pCalibrationOptions->getPeopleThresholdSize()->maxHeight = value;
+	});
+
+	QObject::connect(ui.ipAddress, &QLineEdit::textChanged, this, [this](QString value) {
+		this->pCalibrationOptions->getServerConfig()->ipAddress = value.toStdString();
+	});
+
+	QObject::connect(ui.portNumber, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
+		this->pCalibrationOptions->getServerConfig()->portNumber = value;
 	});
 
 	QObject::connect(ui.imageName, &QComboBox::currentTextChanged, pPlayer.get(), &Player::onImageNameChange);
