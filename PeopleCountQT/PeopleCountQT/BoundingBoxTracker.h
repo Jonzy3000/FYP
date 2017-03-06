@@ -15,7 +15,7 @@ public:
 	BoundingBoxTracker(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions_) :
 		pCalibrationOptions(pCalibrationOptions_)
 	{
-		pCountManager = std::make_shared<CountManager>(pCalibrationOptions);
+		pCountManager = std::make_shared<CountManager>();
 	}
 
 	struct TrackedBox {
@@ -36,14 +36,15 @@ public:
 		std::shared_ptr<HSIVector> pHSIVector;
 	};
 
-	void trackBoxes(std::vector<cv::Rect> baxoesToTrack, int frameNumber, const cv::Mat & frame_) {
+	int trackBoxes(std::vector<cv::Rect> baxoesToTrack, int frameNumber, const cv::Mat & frame_) {
 		this->frame = frame_;
-
+		int counter = 0;
 		for (auto box : baxoesToTrack) {
-			trackBox(box, frameNumber);
+			counter += trackBox(box, frameNumber);
 		}
 
 		cleanUpBoxesThatHaveNotBeenUpdatedRecently(frameNumber);
+		return counter;
 	}
 
 	int size() {
@@ -77,9 +78,9 @@ private:
 	cv::Mat frame;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 
-	void trackBox(cv::Rect box, int frameNumber) {
+	int trackBox(cv::Rect box, int frameNumber) {
 		bool newBox = true;
-
+		int counter = 0;
 		for (auto & trackedBox : boxes) {
 			auto currentBox = trackedBox.second.currentBoundingBox;
 
@@ -91,7 +92,7 @@ private:
 			newBox = false;
 
 			if (hasBoxedPassedLine(trackedBox.second)) {
-				updateCounter(trackedBox.second.direction);
+				counter += updateCounter(trackedBox.second.direction);
 				trackedBox.second.direction = TOUCHING_LINE::NONE;
 			}
 
@@ -101,6 +102,8 @@ private:
 		if (newBox) {
 			addToBoxes(box, frameNumber);
 		}
+
+		return counter;	
 	}
 
 	bool isThereAValidColourVector(TrackedBox box) {
@@ -189,13 +192,17 @@ private:
 		return direction != TOUCHING_LINE::NONE && direction != initialDirection;
 	}
 
-	void updateCounter(TOUCHING_LINE initialLine) {
+	int updateCounter(TOUCHING_LINE initialLine) {
 		if (initialLine == TOUCHING_LINE::OUTLINE) {
 			pCountManager->incrementCountIn();
+			return 1;
 		}
 		else if (initialLine == TOUCHING_LINE::INLINE) {
 			pCountManager->incrementCountOut();
+			return -1;
 		}
+
+		return 0;
 	}
 
 	//This should be own class

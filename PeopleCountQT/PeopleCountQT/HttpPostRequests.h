@@ -4,19 +4,25 @@
 #include <QUrl>
 #include <qmessagebox.h>
 
+
+/*
+TODO move this into main exec thread
+then emit signal from CountManager to do these*/
 class HttpPostRequests : public QObject {
 	Q_OBJECT
 public:
-	HttpPostRequests(const std::shared_ptr<CalibrationOptions> & pCalibrationOptions, QObject *parent = Q_NULLPTR) :
-		pCalibrationOptions(pCalibrationOptions)
+	HttpPostRequests(QObject *parent, const std::shared_ptr<CalibrationOptions> & pCalibrationOptions) :
+		pCalibrationOptions(pCalibrationOptions), QObject(parent)
 	{
+		QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
+
+		pNetworkManager = new QNetworkAccessManager(this);
+		QObject::connect(pNetworkManager, &QNetworkAccessManager::finished, this, &HttpPostRequests::replyFinished);
+
 		auto serverSettings = pCalibrationOptions->getServerConfig();
 		url.setScheme("http");
 		url.setHost(QString::fromStdString(serverSettings->ipAddress));
 		url.setPort(serverSettings->portNumber);
-
-		QObject::connect(pNetworkManager.get(), SIGNAL(finished(QNetworkReply*)),
-			this, SLOT(replyFinished(QNetworkReply*)));
 	}
 
 	void newRoom(std::string name, int maxOccupancy) {
@@ -28,7 +34,8 @@ public:
 		genericPost(query);
 	}
 
-	void updateCounter(std::string name, int incrementBy) {
+	void updateCounter(int incrementBy) {
+		std::string name = "posttest";
 		const QString apiPath = "/fypApi/counter/updateCounter";
 		url.setPath(apiPath, QUrl::DecodedMode);
 		QUrlQuery query = QUrlQuery();
@@ -38,14 +45,18 @@ public:
 	}
 
 private:
+	void sslErrors(QNetworkReply* pReply, const QList<QSslError> &errors) {
+		QMessageBox::information(nullptr, "Errors", "First error " + errors.at(0).errorString());
+	}
+
+
 	void replyFinished(QNetworkReply* pReply) {
-		qDebug() << "HELLO";
-		QMessageBox::information(nullptr, "HELLO", "REPLY FINISHED");
 		pReply->deleteLater();
+
 	}
 
 	void slotError(QNetworkReply::NetworkError error) {
-		QMessageBox::warning(nullptr, tr("Network Error"), tr("Something went wrong sending data to server"));
+		QMessageBox::information(nullptr, "HELLO", "error");
 	}
 
 	void genericPost(QUrlQuery postData) {
@@ -60,11 +71,12 @@ private:
 
 			pNetworkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
 		}
-		
 	}
 
 
 	QUrl url;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
-	std::shared_ptr<QNetworkAccessManager> pNetworkManager = std::make_shared<QNetworkAccessManager>();
+	QString ip;
+	QString port;
+	QNetworkAccessManager* pNetworkManager;
 };

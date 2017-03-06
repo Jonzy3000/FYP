@@ -17,6 +17,7 @@ class Player : public QThread
 signals:
 	//Signal to output frame to be displayed
 	void processedImage(const QImage &image);
+	void updateCounter(int);
 protected:
 	void run();
 	void msleep(int ms);

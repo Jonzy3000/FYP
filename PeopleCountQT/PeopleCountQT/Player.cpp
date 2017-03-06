@@ -67,7 +67,16 @@ void Player::run()
 
 		//perform algorithm
 		//need to create an pausedFrame to use when we're paused so we don't corrupt the original frame
-		frame = pBackgroundSubtractionProcessor->process(frame, bPaused);
+		auto frameAndIncrementCountBy = pBackgroundSubtractionProcessor->process(frame, bPaused);
+		frame = frameAndIncrementCountBy.first;
+		int incrementCountBy = frameAndIncrementCountBy.second;
+
+		/*
+		TO DO - TIMER BASED, every minute or 5 minutes update the counter*/
+		if (incrementCountBy != 0) {
+			emit updateCounter(incrementCountBy);
+		}
+
 
 		delay -= std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - now).count();
 

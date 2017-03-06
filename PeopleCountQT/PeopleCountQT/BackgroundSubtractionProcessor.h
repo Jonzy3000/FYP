@@ -16,7 +16,7 @@ public:
 		pBoundingBoxTracker = std::make_shared<BoundingBoxTracker>(pCalibrationOptions);
 	}
 
-	cv::Mat process(cv::Mat & frame, bool isPaused) {
+	std::pair<const cv::Mat, int> process(cv::Mat & frame, bool isPaused) {
 		cv::Mat frameToProcess = frame.clone();
 
 		if (!isPaused) {
@@ -51,7 +51,7 @@ public:
 		contourFinder.drawConvexHulls(frameToProcess, convexHulls);
 
 		frameNumber++;
-		pBoundingBoxTracker->trackBoxes(regulatedBoxes, frameNumber, frameToProcess);
+		int counter = pBoundingBoxTracker->trackBoxes(regulatedBoxes, frameNumber, frameToProcess);
 		pBoundingBoxTracker->drawIDs(frameToProcess);
 		pBoundingBoxTracker->drawText(frameToProcess);
 
@@ -64,7 +64,7 @@ public:
 		cv::putText(frameToProcess, cv::format("Average FPS=%d", fpsCounter.getFPS()), cv::Point(0, 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255));
 
 
-		return getImageToShow(frameToProcess);
+		return std::make_pair(getImageToShow(frameToProcess), counter);
 	}
 
 	const cv::Mat getImageToShow(const cv::Mat & frame) {

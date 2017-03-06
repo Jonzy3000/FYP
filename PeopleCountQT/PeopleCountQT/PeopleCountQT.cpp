@@ -19,6 +19,9 @@ PeopleCountQT::PeopleCountQT(QWidget *parent)
 	QObject::connect(ui.loadVideo, &QPushButton::clicked, this, &PeopleCountQT::onloadVideoClicked);
 	QObject::connect(ui.playPauseButton, &QPushButton::clicked, this, &PeopleCountQT::onPlayPauseButtonClicked);
 	pPlayer->setCalibrationOptions(pCalibrationOptions);
+
+	pHttpPostRequests = std::make_shared<HttpPostRequests>(this, pCalibrationOptions);
+	QObject::connect(pPlayer.get(), &Player::updateCounter, pHttpPostRequests.get(), &HttpPostRequests::updateCounter);
 }
 
 void PeopleCountQT::updatePlayerUI(QImage img) {

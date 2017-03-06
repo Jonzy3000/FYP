@@ -85,6 +85,7 @@ function SqlApiQueries() {
     }
 
     this.updateCounter = function (req, res) {
+        console.log(req.body);
         var roomName = sanitizeRoomName(req.body.name);
         var incrementBy = req.body.incrementBy;
         var date = req.body.date ? req.body.date : new Date();

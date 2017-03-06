@@ -33,6 +33,7 @@ private:
 	std::shared_ptr<Player> pPlayer;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions = std::make_shared<CalibrationOptions>();
 	std::shared_ptr<CalibrationLoader> pCalibrationLoader = std::make_shared<CalibrationLoader>();
+	std::shared_ptr<HttpPostRequests> pHttpPostRequests;
 	void connectCalibrationOptions();
 	void connectLoadedCalibrationOptions();
 	void ipAddressValidator();

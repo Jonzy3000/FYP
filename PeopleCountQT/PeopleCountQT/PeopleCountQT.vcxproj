@@ -140,7 +140,20 @@
     <CustomBuild Include="CalibrationSaver.h" />
     <ClInclude Include="ContourFinder.h" />
     <ClInclude Include="CountingLines.h" />
-    <ClInclude Include="CountManager.h" />
+    <CustomBuild Include="CountManager.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+    </CustomBuild>
     <ClInclude Include="Direction.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="HSIVector.h" />
