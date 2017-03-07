@@ -68,7 +68,8 @@ void Player::run()
 		//perform algorithm
 		//need to create an pausedFrame to use when we're paused so we don't corrupt the original frame
 		auto frameAndIncrementCountBy = pBackgroundSubtractionProcessor->process(frame, bPaused);
-		frame = frameAndIncrementCountBy.first;
+
+		auto processedFrame = frameAndIncrementCountBy.first;
 		int incrementCountBy = frameAndIncrementCountBy.second;
 
 		/*
@@ -80,15 +81,15 @@ void Player::run()
 
 		delay -= std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - now).count();
 
-		if (frame.channels() == 3) {
-			cv::cvtColor(frame, RGBframe, CV_BGR2RGB);
+		if (processedFrame.channels() == 3) {
+			cv::cvtColor(processedFrame, RGBframe, CV_BGR2RGB);
 			img = QImage((const unsigned char*)(RGBframe.data),
 				RGBframe.cols, RGBframe.rows, QImage::Format_RGB888);
 		}
 		else
 		{
-			img = QImage((const unsigned char*)(frame.data),
-				frame.cols, frame.rows, QImage::Format_Indexed8);
+			img = QImage((const unsigned char*)(processedFrame.data),
+				processedFrame.cols, processedFrame.rows, QImage::Format_Indexed8);
 		}
 
 		emit processedImage(img);
