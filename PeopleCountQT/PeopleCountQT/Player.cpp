@@ -12,7 +12,13 @@ http://codingexodus.blogspot.co.uk/2012/12/working-with-video-using-opencv-and-q
 Player::Player(QObject *parent)
 	: QThread(parent)
 {
+	pUpdateUniformlyInTime = std::make_shared<UpdateUniformlyInTime>(parent);
 	stop = true;
+	QObject::connect(pUpdateUniformlyInTime.get(), &UpdateUniformlyInTime::updateCounter, this, [this](int value) {
+		emit this->updateCounter(value);
+	});
+
+	QObject::connect(this, &Player::updateCountToSend, pUpdateUniformlyInTime.get(), &UpdateUniformlyInTime::updateCountToSend);
 }
 
 bool Player::loadVideo(std::string filename) {
@@ -75,7 +81,7 @@ void Player::run()
 		/*
 		TO DO - TIMER BASED, every minute or 5 minutes update the counter*/
 		if (incrementCountBy != 0) {
-			emit updateCounter(incrementCountBy);
+			emit updateCountToSend(incrementCountBy);
 		}
 
 

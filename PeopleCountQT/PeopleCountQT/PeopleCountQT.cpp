@@ -22,6 +22,7 @@ PeopleCountQT::PeopleCountQT(QWidget *parent)
 
 	pHttpPostRequests = std::make_shared<HttpPostRequests>(this, pCalibrationOptions);
 	QObject::connect(pPlayer.get(), &Player::updateCounter, pHttpPostRequests.get(), &HttpPostRequests::updateCounter);
+	pHttpPostRequests->newRoom();
 }
 
 void PeopleCountQT::updatePlayerUI(QImage img) {
@@ -146,6 +147,7 @@ void PeopleCountQT::connectLoadedCalibrationOptions() {
 	QObject::connect(pCalibrationLoader.get(), &CalibrationLoader::roomDetailsUpdate, this, [this](std::string name, int size) {
 		this->ui.roomName->setText(QString::fromStdString(name));
 		this->ui.maxOccupancy->setValue(size);
+		this->pCalibrationOptions->setupRoomConfig(name, size);
 	});
 }
 
@@ -209,12 +211,20 @@ void PeopleCountQT::connectCalibrationOptions() {
 		this->pCalibrationOptions->getServerConfig()->portNumber = value;
 	});
 
-	QObject::connect(ui.roomName, &QLineEdit::textChanged, this, [this](QString value) {
-		this->pCalibrationOptions->getRoomConfig()->roomName = value.toStdString();
+	QObject::connect(ui.roomName, &QLineEdit::editingFinished, this, [this]() {
+		std::string roomName = ui.roomName->text().toStdString();
+		if (this->pCalibrationOptions->getRoomConfig()->roomName != roomName) {
+			this->pCalibrationOptions->getRoomConfig()->roomName = roomName;
+			this->pHttpPostRequests->newRoom();
+		}
 	});
 
-	QObject::connect(ui.maxOccupancy, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
-		this->pCalibrationOptions->getRoomConfig()->maxOccupancy = value;
+	QObject::connect(ui.maxOccupancy,&QSpinBox::editingFinished, this, [this]() {
+		int maxOccupancy = ui.maxOccupancy->value();
+		if (this->pCalibrationOptions->getRoomConfig()->maxOccupancy != maxOccupancy) {
+			this->pCalibrationOptions->getRoomConfig()->maxOccupancy = maxOccupancy;
+			this->pHttpPostRequests->newRoom();
+		}
 	});
 
 	QObject::connect(ui.imageName, &QComboBox::currentTextChanged, pPlayer.get(), &Player::onImageNameChange);

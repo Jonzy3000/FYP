@@ -25,7 +25,9 @@ public:
 		url.setPort(serverSettings->portNumber);
 	}
 
-	void newRoom(std::string name, int maxOccupancy) {
+	void newRoom() {
+		std::string name = pCalibrationOptions->getRoomConfig()->roomName;
+		int maxOccupancy = pCalibrationOptions->getRoomConfig()->maxOccupancy;
 		const QString apiPath = "/fypApi/counter/newRoom";
 		url.setPath(apiPath, QUrl::DecodedMode);
 		QUrlQuery query = QUrlQuery();
@@ -35,7 +37,7 @@ public:
 	}
 
 	void updateCounter(int incrementBy) {
-		std::string name = "posttest";
+		std::string name = pCalibrationOptions->getRoomConfig()->roomName;
 		const QString apiPath = "/fypApi/counter/updateCounter";
 		url.setPath(apiPath, QUrl::DecodedMode);
 		QUrlQuery query = QUrlQuery();

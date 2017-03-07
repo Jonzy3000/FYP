@@ -9,6 +9,7 @@
 #include <memory>
 #include "BackgroundSubtractionProcessor.h"
 #include "CalibrationOptions.h"
+#include "UpdateUniformlyInTime.h"
 
 using namespace cv;
 class Player : public QThread
@@ -18,6 +19,7 @@ signals:
 	//Signal to output frame to be displayed
 	void processedImage(const QImage &image);
 	void updateCounter(int);
+	void updateCountToSend(int);
 protected:
 	void run();
 	void msleep(int ms);
@@ -57,4 +59,5 @@ private:
 	std::shared_ptr<BackgroundSubtractionProcessor> pBackgroundSubtractionProcessor;
 	std::shared_ptr<CalibrationOptions> pCalibrationOptions;
 	bool bPaused = false;
+	std::shared_ptr<UpdateUniformlyInTime> pUpdateUniformlyInTime;
 };
