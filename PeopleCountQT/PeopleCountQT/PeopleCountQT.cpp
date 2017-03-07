@@ -142,13 +142,24 @@ void PeopleCountQT::connectLoadedCalibrationOptions() {
 		this->ui.ipAddress->setText(QString::fromStdString(ipAddress));
 		this->ui.portNumber->setValue(port);
 	});
+
+	QObject::connect(pCalibrationLoader.get(), &CalibrationLoader::roomDetailsUpdate, this, [this](std::string name, int size) {
+		this->ui.roomName->setText(QString::fromStdString(name));
+		this->ui.maxOccupancy->setValue(size);
+	});
 }
 
+/*
+http://stackoverflow.com/questions/23166283/how-to-set-input-mask-and-qvalidator-to-a-qlineedit-at-a-time-in-qt*/
 void PeopleCountQT::ipAddressValidator()
 {
-	QRegExp ip("(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
-	QRegExpValidator ipValidator(ip, 0);
-	ui.ipAddress->setValidator(&ipValidator);
+	QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+	QRegExp ipRegex("^" + ipRange
+		+ "\\." + ipRange
+		+ "\\." + ipRange
+		+ "\\." + ipRange + "$");
+	QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
+	ui.ipAddress->setValidator(ipValidator);
 
 }
 
@@ -196,6 +207,14 @@ void PeopleCountQT::connectCalibrationOptions() {
 
 	QObject::connect(ui.portNumber, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
 		this->pCalibrationOptions->getServerConfig()->portNumber = value;
+	});
+
+	QObject::connect(ui.roomName, &QLineEdit::textChanged, this, [this](QString value) {
+		this->pCalibrationOptions->getRoomConfig()->roomName = value.toStdString();
+	});
+
+	QObject::connect(ui.maxOccupancy, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
+		this->pCalibrationOptions->getRoomConfig()->maxOccupancy = value;
 	});
 
 	QObject::connect(ui.imageName, &QComboBox::currentTextChanged, pPlayer.get(), &Player::onImageNameChange);

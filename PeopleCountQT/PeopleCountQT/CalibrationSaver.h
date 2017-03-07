@@ -20,6 +20,7 @@ public:
 		json = getPeopleThreshold(json);
 		json = getBlobExtractionConfigJSON(json);
 		json = getServerSettings(json);
+		json = getRoomDetails(json);
 
 		try {
 			JSONWriter::saveJson(fileName, json);
@@ -74,6 +75,14 @@ private:
 		json["server settings"]["ip address"] = serverSettings->ipAddress;
 		json["server settings"]["port"] = serverSettings->portNumber;
 		
+		return json;
+	}
+
+	JSONLib getRoomDetails(JSONLib& json) {
+		const auto roomDetails = pCalibrationOptions->getRoomConfig();
+		json["room details"]["room name"] = roomDetails->roomName;
+		json["room details"]["room size"] = roomDetails->maxOccupancy;
+
 		return json;
 	}
 

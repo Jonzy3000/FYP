@@ -20,6 +20,7 @@ public:
 		setupBlobExtractionConfg(json);
 		setupPeopleThreshold(json);
 		setupServerConfig(json);
+		setupRoomConfig(json);
 	}
 
 	void setupContourConifg(const JSONLib& json) {
@@ -239,11 +240,46 @@ public:
 		emit serverSettingsUpdate(ipAddress, (int) portNumber);
 	}
 
+	void setupRoomConfig(const JSONLib& json) {
+		auto roomDetailsItr = json.find("room details");
+		if (roomDetailsItr == json.end()) {
+			return;
+		}
+
+		auto roomDetails = *roomDetailsItr;
+		if (!roomDetails.is_object()) {
+			return;
+		}
+
+		auto nameItr = roomDetails.find("room name");
+		if (nameItr == roomDetails.end()) {
+			return;
+		}
+
+		auto name = *nameItr;
+		if (!name.is_string()) {
+			return;
+		}
+
+		auto sizeItr = roomDetails.find("room size");
+		if (sizeItr == roomDetails.end()) {
+			return;
+		}
+
+		auto size = *sizeItr;
+		if (!size.is_number_integer()) {
+			return;
+		}
+
+		emit roomDetailsUpdate(name, size);
+	}
+
 signals:
 	void contourUpdate(int value);
 	void blobExtractionUpdate(int thresholdValue, int openKernelSize, int closeKernelSize);
 	void countingLinesUpdate(std::string orientation, int outlinePercentage, int inLinePercentage);
 	void peopleThresholdSizeUpdate(int maxArea, int maxWidth, int maxHeight);
 	void serverSettingsUpdate(std::string ip, int port);
+	void roomDetailsUpdate(std::string roomName, int maxOccupancy);
 
 };

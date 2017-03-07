@@ -13,6 +13,21 @@ public:
 
 	}
 
+	struct RoomConfig {
+		RoomConfig(std::string roomName_, int maxOccupancy_) :
+			roomName(roomName_),
+			maxOccupancy(maxOccupancy_)
+		{
+
+		}
+
+		RoomConfig() {}
+
+
+		std::string roomName;
+		int maxOccupancy;
+	};
+
 	struct ContourConfig {
 		ContourConfig(int minArea_) :
 			minArea(minArea_)
@@ -138,6 +153,10 @@ public:
 		return pServerConfig;
 	}
 
+	const std::shared_ptr<RoomConfig> getRoomConfig() {
+		return pRoomConfig;
+	}
+
 public slots:
 	void setupContourConfig(int minArea) {
 		pContourConfig = std::make_shared<ContourConfig>(minArea);
@@ -159,12 +178,17 @@ public slots:
 		pServerConfig = std::make_shared <ServerConfig>(ipAddress, portNumber);
 	}
 
+	void setupRoomConfig(std::string roomName, int maxOccupancy) {
+		pRoomConfig = std::make_shared<RoomConfig>(roomName, maxOccupancy);
+	}
+
 private:
 	std::shared_ptr<ContourConfig> pContourConfig = std::make_shared<ContourConfig>();
 	std::shared_ptr<BlobExtractionConfig> pBlobExtractionConfig = std::make_shared<BlobExtractionConfig>();
 	std::shared_ptr<PeopleThresholdSize> pPopleThresholdSize = std::make_shared<PeopleThresholdSize>();
 	std::shared_ptr<CountingLinesConfig>  pCountingLinesConfig = std::make_shared<CountingLinesConfig>();
 	std::shared_ptr<ServerConfig> pServerConfig = std::make_shared<ServerConfig>();
+	std::shared_ptr<RoomConfig> pRoomConfig = std::make_shared<RoomConfig>();
 
 };
 
